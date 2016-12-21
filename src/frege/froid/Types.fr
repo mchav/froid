@@ -1,0 +1,8 @@
+module froid.Types where
+
+import froid.view.View
+
+data ClassCastException = native java.lang.ClassCastException
+
+class CastTarget a where
+    downcast :: MutableIO View -> IO (ClassCastException | MutableIO a)

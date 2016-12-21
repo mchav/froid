@@ -1,0 +1,9 @@
+module froid.widget.Toast where
+
+import froid.content.Context
+
+data Toast = native android.widget.Toast where
+    native lengthLong "android.widget.Toast.LENGTH_LONG" :: Int
+    native lengthShort "android.widget.Toast.LENGTH_SHORT" :: Int
+    native makeText "android.widget.Toast.makeText" :: MutableIO Context -> String -> Int -> IO (MutableIO Toast)
+    native show :: MutableIO Toast -> IO ()

@@ -1,0 +1,3 @@
+module froid.content.Context where
+
+data Context = native android.content.Context

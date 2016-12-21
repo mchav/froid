@@ -1,0 +1,3 @@
+module froid.view.Menu where
+
+data Menu = native android.view.Menu

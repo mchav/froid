@@ -1,0 +1,19 @@
+module froid.widget.Button where
+
+import froid.app.Activity
+import froid.content.Context
+import froid.view.View
+import froid.Types
+
+data Button = native android.widget.Button where
+    native setOnClickListener :: MutableIO Button -> MutableIO OnClickListener -> IO ()
+    native setVisibility :: MutableIO Button -> Int -> IO ()
+    native getText :: MutableIO Button -> IO CharSequence
+
+instance CastTarget Button where
+    native downcast "(android.widget.Button)" :: MutableIO View -> IO (ClassCastException | MutableIO Button)
+
+asButton :: MutableIO Activity -> Int -> IO (MutableIO Button)
+asButton this res = do
+    v <- this.findViewById res
+    (downcast v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO Button)

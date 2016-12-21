@@ -1,0 +1,3 @@
+module froid.widget.Toolbar where
+
+data Toolbar = native android.widget.Toolbar
