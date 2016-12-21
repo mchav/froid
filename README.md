@@ -25,7 +25,7 @@ import froid.app.Activity
 import froid.content.Context
 import froid.widget.TextView
 
-native module type Activity {}
+native module type Activity where {}
 
 onCreate :: MutableIO Activity -> IO ()
 onCreate !this = do
