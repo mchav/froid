@@ -1,0 +1,7 @@
+module froid.os.Bundle where
+
+data Bundle = native android.os.Bundle where
+    native getInt :: MutableIO Bundle -> String -> IO Int
+    native getCharSequence :: MutableIO Bundle -> String -> IO CharSequence
+    native putInt :: MutableIO Bundle -> String -> Int -> IO ()
+    native putCharSequence :: MutableIO Bundle -> String -> CharSequence -> IO ()

@@ -11,8 +11,8 @@ data OnClickListener = native android.view.View.OnClickListener
 
 native onClick "froid.view.View.onClickHandler" :: (MutableIO View -> IO ()) -> IO (MutableIO OnClickListener)
 
-setOnClick :: MutableIO View -> (MutableIO View -> IO ()) -> IO ()
-setOnClick v handler = do
+setViewOnClick :: MutableIO View -> (MutableIO View -> IO ()) -> IO ()
+setViewOnClick v handler = do
                   listener <- onClick handler
                   v.setOnClickListener listener
 

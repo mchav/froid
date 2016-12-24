@@ -2,15 +2,20 @@ module froid.app.Activity where
 
 import froid.content.Context
 import froid.content.Intent
+import froid.os.Bundle
 import froid.view.View
 import froid.widget.Toolbar
-	
+    
 data Activity = native froid.app.FregeActivity where
-	native getApplicationContext :: MutableIO Activity -> IO (MutableIO Context)
-	native resultOk "android.app.Activity.RESULT_OK" :: Int
-	native getIntent :: MutableIO Activity -> IO (MutableIO Intent)
-	native findViewById :: MutableIO Activity -> Int -> IO (MutableIO View)
-	native setContentView :: MutableIO Activity -> Int -> IO ()
-	native setActionBar :: MutableIO Activity -> MutableIO Toolbar -> IO ()
-	native setResult :: MutableIO Activity -> Int -> MutableIO Intent -> IO ()
-	native startActivityForResult :: MutableIO Activity -> MutableIO Intent -> Int -> IO ()
+    native getApplicationContext :: MutableIO Activity -> IO (MutableIO Context)
+    native resultOk "android.app.Activity.RESULT_OK" :: Int
+    native getIntent :: MutableIO Activity -> IO (MutableIO Intent)
+    native findViewById :: MutableIO Activity -> Int -> IO (MutableIO View)
+    native setContentView :: MutableIO Activity -> Int -> IO ()
+    native setActionBar :: MutableIO Activity -> MutableIO Toolbar -> IO ()
+    native setResult :: MutableIO Activity -> Int -> MutableIO Intent -> IO ()
+    native startActivityForResult :: MutableIO Activity -> MutableIO Intent -> Int -> IO ()
+    -- new methods
+    native setOnPause :: MutableIO Activity -> IO () -> IO ()
+    native setOnSavedInstanceState :: MutableIO Activity -> (Maybe (MutableIO Bundle) -> IO ()) -> IO ()
+    native setOnActivityResult :: MutableIO Activity -> (Int -> Int -> Maybe(MutableIO Intent) -> IO ()) -> IO ()

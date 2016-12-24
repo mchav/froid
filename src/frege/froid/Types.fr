@@ -4,5 +4,8 @@ import froid.view.View
 
 data ClassCastException = native java.lang.ClassCastException
 
-class CastTarget a where
+class ViewCast a where
     downcast :: MutableIO View -> IO (ClassCastException | MutableIO a)
+
+class ViewInstance a where
+	upcast :: MutableIO a -> IO (ClassCastException | MutableIO View)

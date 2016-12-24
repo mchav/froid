@@ -1,0 +1,6 @@
+module froid.util.Log where
+
+data Log = native android.util.Log where
+	native d "android.util.Log.d" :: String -> String -> IO Int
+	native e "android.util.Log.e" :: String -> String -> IO Int
+	native i "android.util.Log.i" :: String -> String -> IO Int
