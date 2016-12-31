@@ -1,0 +1,5 @@
+module froid.os.Build where
+
+data Build = native android.os.Build where
+	pure native versionSDKInt "android.os.Build.VERSION.SDK_INT" :: Int
+	pure native lollipopCode "android.os.Build.VERSION_CODES.LOLLIPOP" :: Int

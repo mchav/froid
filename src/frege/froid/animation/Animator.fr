@@ -1,0 +1,33 @@
+module froid.animation.Animator where
+
+data Animator = native android.animation.Animator where
+    native addListener :: MutableIO Animator -> MutableIO AnimatorListenerAdapter -> IO ()
+    native start :: MutableIO Animator -> IO ()
+
+data AnimatorListenerAdapter = native android.animation.AnimatorListenerAdapter
+
+native onAnimationEnd "froid.animation.Animator.onAnimationEndHandler" :: (MutableIO Animator -> IO ()) -> IO (MutableIO AnimatorListenerAdapter)
+
+addAnimationListener :: MutableIO Animator -> (MutableIO Animator -> IO ()) -> IO ()
+addAnimationListener animation lambda = do
+    listener <- onAnimationEnd lambda
+    animation.addListener listener
+
+native module where {
+    public static android.animation.AnimatorListenerAdapter 
+    onAnimationEndHandler(final frege.run7.Func.U<android.animation.Animator, frege.run7.Func.U<RealWorld,Short>> lambda) {
+        return (new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                super.onAnimationEnd(animation);
+                try {
+                    final frege.run7.Func.U<Object,Short> res = RunTM.<frege.run7.Func.U<Object,Short>>cast(lambda.apply(Thunk.lazy(animation)).call()).call();
+                    frege.prelude.PreludeBase.TST.run(res).call();
+                } catch(RuntimeException re) {
+                    re.printStackTrace();
+                    throw re;
+                }
+            }
+        });
+    }
+}

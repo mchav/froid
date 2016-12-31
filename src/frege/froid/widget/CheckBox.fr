@@ -1,0 +1,26 @@
+module froid.widget.CheckBox where
+
+import froid.view.View
+import froid.widget.CompoundButton
+
+import froid.Types
+
+data CheckBox = native android.widget.CheckBox where
+    native setOnCheckedChangeListener :: MutableIO CheckBox -> MutableIO OnCheckedChangeListener -> IO ()
+
+instance ViewSub CheckBox where
+    native fromView "(android.widget.CheckBox)" :: MutableIO View -> IO (ClassCastException | MutableIO CheckBox)
+
+instance IsView CheckBox where
+    native toView "(android.view.View)" :: MutableIO CheckBox -> IO (ClassCastException | MutableIO View)
+
+asCheckBox :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO CheckBox)
+asCheckBox find res = do
+    v <- find res
+    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO CheckBox)
+
+-- FIXME: Make general
+setOnCheckChanged :: MutableIO CheckBox -> (MutableIO CompoundButton -> Bool -> IO ()) -> IO ()
+setOnCheckChanged cb lambda = do
+    listener <- checkedChanged lambda
+    cb.setOnCheckedChangeListener listener

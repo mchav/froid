@@ -1,0 +1,4 @@
+module froid.text.format.DateFormat where
+
+data DateFormat = native android.text.format.DateFormat where
+    native format "android.text.format.DateFormat.format" :: String -> MutableIO Date -> IO String

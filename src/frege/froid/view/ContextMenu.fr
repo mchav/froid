@@ -1,0 +1,5 @@
+module froid.view.ContextMenu where
+
+data ContextMenu = native android.view.ContextMenu
+
+data ContextMenuInfo = native android.view.ContextMenu.ContextMenuInfo

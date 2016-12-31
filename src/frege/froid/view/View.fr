@@ -3,6 +3,7 @@ module froid.view.View where
 data View = native android.view.View where
     pure native visible "android.view.View.VISIBLE" :: Int
     pure native invisible "android.view.View.INVISIBLE" :: Int
+    native findViewById :: MutableIO View -> Int -> IO (MutableIO View)
     native setOnClickListener :: MutableIO View -> MutableIO OnClickListener -> IO ()
     native setVisibility :: MutableIO View -> Int -> IO ()
 

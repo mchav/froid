@@ -1,0 +1,3 @@
+module froid.text.Editable where
+
+data Editable = native android.text.Editable

@@ -1,0 +1,34 @@
+module froid.widget.CompoundButton where
+
+data CompoundButton = native android.widget.CompoundButton
+
+data OnCheckedChangeListener = native android.widget.CompoundButton.OnCheckedChangeListener
+
+native checkedChanged "froid.widget.CompoundButton.newCheckedChangeListener" :: (MutableIO CompoundButton -> Bool -> IO ()) -> IO (MutableIO OnCheckedChangeListener)
+
+{-
+-- FIXME: Make general
+setOnCheckChanged :: MutableIO CheckBox -> (MutableIO CompoundButton -> Boolean -> IO ()) -> IO ()
+setOnCheckChanged cb lambda = do
+    listener <- checkedChanged lambda
+    cb.setOnCheckedChangeListener cb listener
+-}
+
+native module where {
+    private static android.widget.CompoundButton.OnCheckedChangeListener
+    newCheckedChangeListener(final Func.U<android.widget.CompoundButton, Func.U<Boolean, Func.U<RealWorld, Short>>> lambda) {
+        return new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged (android.widget.CompoundButton buttonView, boolean isChecked) {
+                try {
+                    Func.U<Boolean, Func.U<Object, Short>> appliedButton = RunTM.<Func.U<Boolean, Func.U<Object, Short>>>cast(lambda.apply(Thunk.<android.widget.CompoundButton>lazy(buttonView)).call()).call();
+                    Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(appliedButton.apply(Thunk.<Boolean>lazy(isChecked)).call()).call();
+                    frege.prelude.PreludeBase.TST.run(res).call();
+                } catch(RuntimeException re) {
+                    re.printStackTrace();
+                    throw re;
+                }
+            }
+        };
+    }
+}

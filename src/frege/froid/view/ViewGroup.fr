@@ -1,0 +1,3 @@
+module froid.view.ViewGroup where
+
+data ViewGroup = native android.view.ViewGroup

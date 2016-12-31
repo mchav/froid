@@ -1,0 +1,7 @@
+module froid.view.ViewAnimationUtils where
+
+import froid.animation.Animator
+import froid.view.View
+
+data ViewAnimationUtils = native android.view.ViewAnimationUtils where
+    native createCircularReveal "android.view.ViewAnimationUtils.createCircularReveal" :: MutableIO View -> Int -> Int -> Float -> Float -> STMutable RealWorld Animator

@@ -1,3 +1,3 @@
 module froid.view.MenuItem where
 
-data Menu = native android.view.MenuItem
+data MenuItem = native android.view.MenuItem

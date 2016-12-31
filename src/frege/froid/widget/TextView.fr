@@ -1,6 +1,5 @@
 module froid.widget.TextView where
 
-import froid.app.Activity
 import froid.content.Context
 import froid.view.View
 import froid.Types
@@ -9,18 +8,19 @@ data TextView = native android.widget.TextView where
     native new :: MutableIO Context -> STMutable RealWorld TextView
     native setText :: MutableIO TextView -> String -> IO ()
     native getText :: MutableIO TextView -> IO CharSequence
+    native getVisibility :: MutableIO TextView -> IO Int
     native setVisibility :: MutableIO TextView -> Int -> IO ()
 
 getTextString :: MutableIO TextView -> IO String
 getTextString tv = liftM (\s -> s.toString) tv.getText
 
-asTextView :: MutableIO Activity -> Int -> IO (MutableIO TextView)
-asTextView this res = do
-    v <- this.findViewById res
-    (downcast v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO TextView)
+asTextView :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO TextView)
+asTextView find res = do
+    v <- find res
+    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO TextView)
 
-instance ViewCast TextView where
-    native downcast "(android.widget.TextView)" :: MutableIO View -> IO (ClassCastException | MutableIO TextView)
+instance ViewSub TextView where
+    native fromView "(android.widget.TextView)" :: MutableIO View -> IO (ClassCastException | MutableIO TextView)
 
-instance ViewInstance TextView where
-    native upcast "(android.view.View)" :: MutableIO TextView -> IO (ClassCastException | MutableIO View)
+instance IsView TextView where
+    native toView "(android.view.View)" :: MutableIO TextView -> IO (ClassCastException | MutableIO View)

@@ -5,5 +5,5 @@ import froid.content.Context
 data Intent = native android.content.Intent where
     native new :: () -> STMutable RealWorld Intent
                 | MutableIO Context -> Class a -> STMutable RealWorld Intent
-    native getBooleanExtra :: MutableIO Intent -> String -> Bool -> IO Bool
+    native getBooleanExtra :: MutableIO Intent -> String -> Bool -> IO (Maybe Bool)
     native putExtra :: MutableIO Intent -> String -> Bool -> IO ()

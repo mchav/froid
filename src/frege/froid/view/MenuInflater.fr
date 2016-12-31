@@ -1,0 +1,6 @@
+module froid.view.MenuInflater where
+
+import froid.view.Menu
+
+data MenuInflater = native android.view.MenuInflater where
+	native inflate :: MutableIO MenuInflater -> Int -> MutableIO Menu -> IO ()

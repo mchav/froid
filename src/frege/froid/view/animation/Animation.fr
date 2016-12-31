@@ -1,0 +1,3 @@
+module froid.view.animation.Animation where
+
+data Animation = native android.view.animation.Animation

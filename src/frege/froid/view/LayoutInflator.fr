@@ -1,0 +1,7 @@
+module froid.view.LayoutInflater where
+
+import froid.view.View
+import froid.view.ViewGroup
+
+data LayoutInflater = native android.view.LayoutInflater where
+    native inflate :: MutableIO LayoutInflater -> Int -> MutableIO ViewGroup -> Bool -> IO (MutableIO View)
