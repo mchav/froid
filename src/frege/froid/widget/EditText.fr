@@ -8,7 +8,7 @@ import froid.Types
 data EditText = native android.widget.EditText where
     native new :: MutableIO Context -> STMutable RealWorld EditText
     native addTextChangedListener :: MutableIO EditText -> MutableIO TextWatcher -> IO ()
-    --native setText :: MutableIO EditText -> String -> IO ()
+    native setText :: MutableIO EditText -> String -> IO ()
     native getText :: MutableIO EditText -> IO CharSequence
     native getVisibility :: MutableIO EditText -> IO Int
     native setVisibility :: MutableIO EditText -> Int -> IO ()

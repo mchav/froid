@@ -1,8 +1,13 @@
 module froid.os.Bundle where
 
+import froid.Types
+
 data Bundle = native android.os.Bundle where
+    native new :: () -> STMutable RealWorld Bundle
     native getChar :: MutableIO Bundle -> String -> IO (Maybe Char)
     native getCharSequence :: MutableIO Bundle -> String -> IO (Maybe CharSequence)
+    native getSerializable :: MutableIO Bundle -> String -> IO (Maybe (MutableIO SerializableObject))
     native putChar :: MutableIO Bundle -> String -> Char -> IO ()
+    native putSerializable :: MutableIO Bundle -> String -> MutableIO SerializableObject -> IO ()
     native putCharSequence :: MutableIO Bundle -> String -> CharSequence -> IO ()
     					    | MutableIO Bundle -> String -> String -> IO ()

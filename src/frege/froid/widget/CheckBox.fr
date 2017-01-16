@@ -6,6 +6,7 @@ import froid.widget.CompoundButton
 import froid.Types
 
 data CheckBox = native android.widget.CheckBox where
+    native setChecked :: MutableIO CheckBox -> Bool -> IO ()
     native setOnCheckedChangeListener :: MutableIO CheckBox -> MutableIO OnCheckedChangeListener -> IO ()
 
 instance ViewSub CheckBox where

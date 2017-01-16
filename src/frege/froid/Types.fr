@@ -1,9 +1,10 @@
 module froid.Types where
 
-import froid.app.Activity
 import froid.view.View
 
 data ClassCastException = native java.lang.ClassCastException
+
+data SerializableObject = native java.io.Serializable
 
 class ViewSub a where
     fromView :: MutableIO View -> IO (ClassCastException |MutableIO a)
@@ -11,8 +12,5 @@ class ViewSub a where
 class IsView a where
 	toView :: MutableIO a -> IO (ClassCastException | MutableIO View)
 
-class ActivitySub a where
-	fromActivity :: MutableIO Activity -> IO (ClassCastException |MutableIO a)
-
-class IsActivity a where
-	toActivity :: MutableIO a -> IO (ClassCastException | MutableIO Activity)
+class IsViewHolder a where
+    itemView :: MutableIO a -> IO (MutableIO View)

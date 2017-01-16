@@ -1,0 +1,95 @@
+module froid.app.java.NativeActivity where
+
+data NativeActivity = native android.app.Activity
+
+native module type NativeActivity where {
+    
+    frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short> onPauseLambda = null;
+    frege.run7.Func.U<android.os.Bundle, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>> onSavedInstanceStateLambda = null;
+    frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>> onActivityResultLambda = null;
+
+    // executes io action given as parameter
+    public void setOnPause(frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short> lambda) {
+        this.onPauseLambda = lambda;
+    }
+
+    public void setOnSavedInstanceState(frege.run7.Func.U<android.os.Bundle, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>> lambda) {
+        this.onSavedInstanceStateLambda = lambda;
+    }
+
+    public void setOnActivityResult(frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>> onActivityResultLambda) {
+        this.onActivityResultLambda = onActivityResultLambda;
+    }
+
+    // reflection methods
+    private Object invokeStaticActivityMethod(String methodName, Object[] args, String signature) {
+        java.lang.reflect.Method fregeMethod = null;
+        try {
+            fregeMethod = this.getClass().getDeclaredMethod(methodName, NativeActivity.class, frege.run7.Lazy.class);
+        } catch (NoSuchMethodException nsm) {
+            System.err.println("Method " + methodName + " is not defined. Make sure your onCreate Function is defined as " + signature);
+            System.exit(-1);
+        }
+
+        Object invokedMethod = null;
+
+        try {
+            invokedMethod = fregeMethod.invoke(null, args);
+        } catch (Exception e) { // none of the invocation exceptions should happen
+            System.err.println("Failed to call " + methodName);
+            System.exit(-1);
+        }
+        return invokedMethod;
+    }
+
+    private Object run(Object invokedMethod) {
+        if (invokedMethod == null) return null;
+        
+        final frege.run7.Func.U<Object,Short> res = frege.run.RunTM.<frege.run7.Func.U<Object,Short>>cast(
+                invokedMethod).call();
+        return frege.prelude.PreludeBase.TST.run(res).call();
+    }
+
+    @Override
+    public void onCreate(android.os.Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        frege.prelude.PreludeBase.TMaybe<android.os.Bundle> sis = savedInstanceState == null ?
+         frege.prelude.PreludeBase.TMaybe.DNothing.<android.os.Bundle>mk(): 
+         frege.prelude.PreludeBase.TMaybe.DJust.<android.os.Bundle>mk(frege.run7.Thunk.<android.os.Bundle>lazy(savedInstanceState));
+        Object invokedOnCreate = invokeStaticActivityMethod("onCreate", new Object[] {this, sis}, "onCreate :: MutableIO Activity -> IO ()");
+        run(invokedOnCreate);   
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        run(onPauseLambda);
+    }
+
+    @Override
+    public void onSaveInstanceState(android.os.Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        if (onSavedInstanceStateLambda != null)
+            run(onSavedInstanceStateLambda.apply(frege.run7.Thunk.<android.os.Bundle>lazy(savedInstanceState)).call());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        if (onActivityResultLambda == null) return;
+        
+        // apply the arguments incrementally
+        frege.run7.Func.U<Integer, frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>> first = 
+            frege.run.RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>cast(
+                onActivityResultLambda.apply(frege.run7.Thunk.<Integer>lazy(requestCode)).call());
+        frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>> second = 
+            frege.run.RunTM.<frege.run7.Func.U<frege.prelude.PreludeBase.TMaybe<android.content.Intent>, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>cast(
+                first.apply(frege.run7.Thunk.<Integer>lazy(resultCode)).call());
+
+        // wrap android.content.Intent in maybe
+        frege.prelude.PreludeBase.TMaybe<android.content.Intent> d = data == null ?
+         frege.prelude.PreludeBase.TMaybe.DNothing.<android.content.Intent>mk(): 
+         frege.prelude.PreludeBase.TMaybe.DJust.<android.content.Intent>mk(frege.run7.Thunk.<android.content.Intent>lazy(data));
+
+        run(second.apply(frege.run7.Thunk.<frege.prelude.PreludeBase.TMaybe<android.content.Intent>>lazy(d)).call());
+    }
+}

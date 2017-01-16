@@ -1,9 +1,15 @@
 module froid.content.Intent where
 
+import frege.java.Util
 import froid.content.Context
+
+import froid.Types
 
 data Intent = native android.content.Intent where
     native new :: () -> STMutable RealWorld Intent
                 | MutableIO Context -> Class a -> STMutable RealWorld Intent
     native getBooleanExtra :: MutableIO Intent -> String -> Bool -> IO (Maybe Bool)
+    native getSerializableExtra :: MutableIO Intent -> String -> IOMutable SerializableObject
     native putExtra :: MutableIO Intent -> String -> Bool -> IO ()
+                     | MutableIO Intent -> String -> MutableIO SerializableObject -> IO ()
+
