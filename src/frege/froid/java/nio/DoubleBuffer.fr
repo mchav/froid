@@ -1,0 +1,3 @@
+module froid.java.nio.DoubleBuffer where
+
+data DoubleBuffer = native java.nio.DoubleBuffer

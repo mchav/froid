@@ -1,0 +1,7 @@
+module froid.view.MotionEvent where
+
+data MotionEvent = native android.view.MotionEvent where
+    pure native actionMove "android.view.MotionEvent.ACTION_MOVE" :: Int
+    native getActionMasked :: MutableIO MotionEvent -> IO Int
+    native getX :: MutableIO MotionEvent -> IO Float
+    native getY :: MutableIO MotionEvent -> IO Float

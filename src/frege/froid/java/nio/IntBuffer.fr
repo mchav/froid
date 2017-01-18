@@ -1,0 +1,5 @@
+module froid.java.nio.IntBuffer where
+
+data IntBuffer = native java.nio.IntBuffer where
+    native put :: MutableIO IntBuffer -> ArrayOf RealWorld Int -> IO ()
+    native position :: MutableIO IntBuffer -> Int -> IO ()

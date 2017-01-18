@@ -1,0 +1,3 @@
+module froid.java.nio.ShortBuffer where
+
+data ShortBuffer = native java.nio.ShortBuffer

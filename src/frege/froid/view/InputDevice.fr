@@ -1,0 +1,3 @@
+module froid.view.InputDevice where
+
+data InputEvent = native android.view.InputDevice

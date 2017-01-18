@@ -1,0 +1,3 @@
+module froid.java.nio.CharBuffer where
+
+data CharBuffer = native java.nio.CharBuffer

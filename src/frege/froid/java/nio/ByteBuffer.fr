@@ -1,0 +1,13 @@
+module froid.java.nio.ByteBuffer where
+
+import froid.java.nio.IntBuffer
+
+data ByteBuffer = native java.nio.ByteBuffer where
+    native allocateDirect "java.nio.ByteBuffer.allocateDirect" :: Int -> STMutable RealWorld ByteBuffer
+    native asIntBuffer :: MutableIO ByteBuffer -> IOMutable IntBuffer
+    native order :: MutableIO ByteBuffer -> MutableIO ByteOrder -> IO ()
+    native put :: MutableIO ByteBuffer -> ArrayOf RealWorld Byte -> IO ()
+    native position :: MutableIO ByteBuffer -> Int -> IO ()
+
+data ByteOrder = native java.nio.ByteOrder where
+    native nativeOrder "java.nio.ByteOrder.nativeOrder" :: () -> IOMutable ByteOrder

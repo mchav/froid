@@ -1,0 +1,7 @@
+module froid.opengl.glSurfaceView.Renderer where
+
+import froid.opengl.glSurfaceView.java.NativeRenderer
+
+data GLSurfaceViewRenderer = native froid.opengl.glSurfaceView.java.NativeRenderer.FregeRenderer
+
+native mkGLSurfaceViewRenderer "froid.opengl.glSurfaceView.java.NativeRenderer.delegate" :: GlsvRendererDelegator -> STMutable RealWorld GLSurfaceViewRenderer

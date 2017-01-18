@@ -1,0 +1,3 @@
+module froid.java.nio.LongBuffer where
+
+data LongBuffer = native java.nio.LongBuffer

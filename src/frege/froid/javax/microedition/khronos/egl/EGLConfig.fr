@@ -1,0 +1,4 @@
+module froid.javax.microedition.khronos.egl.EGLConfig where
+
+data EGLConfig = native javax.microedition.khronos.egl.EGLConfig
+
