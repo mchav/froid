@@ -18,8 +18,7 @@ native module type Activity where {}
 
 onCreate :: MutableIO Activity -> Maybe (MutableIO Bundle) -> IO ()
 onCreate this bundle = do
-	context <- this.getApplicationContext
-	tv <- TextView.new context
+	tv <- TextView.new this
 	tv.setText "Hello, Android - Love, Frege"
 	this.setContentView tv
 ```
