@@ -3,7 +3,7 @@ A library for using the Frege programming language in Android development.
 
 ## Usage and examples
 
-To get setup froid read the instructions on the [froid Wiki](https://github.com/mchav/froid/wiki).
+To get/setup froid read the instructions on the [froid Wiki](https://github.com/mchav/froid/wiki).
 
 Simple Activity
 ---------------
