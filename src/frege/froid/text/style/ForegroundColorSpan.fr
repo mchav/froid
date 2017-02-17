@@ -1,0 +1,4 @@
+module froid.text.style.ForegroundColorSpan where
+
+data ForegroundColorSpan = native android.text.style.ForegroundColorSpan where
+    native new :: Int -> STMutable RealWorld ForegroundColorSpan

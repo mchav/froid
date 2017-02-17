@@ -1,0 +1,7 @@
+module froid.app.ActionBar where
+
+data ActionBar = native android.app.ActionBar where
+    native setIcon :: MutableIO ActionBar -> Int -> IO ()
+    native setLogo :: MutableIO ActionBar -> Int -> IO ()
+    native setDisplayShowHomeEnabled :: MutableIO ActionBar -> Bool -> IO ()
+    native setDisplayUseLogoEnabled :: MutableIO ActionBar -> Bool -> IO ()

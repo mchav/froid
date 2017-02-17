@@ -1,4 +1,7 @@
 # froid
+
+<img width="450" height="450" src="froid.png"/>
+
 A library for using the Frege programming language in Android development.
 
 ## Building froid

@@ -1,6 +1,7 @@
 module froid.view.View where
 
 data View = native android.view.View where
+    pure native focusDown "android.view.View.FOCUS_DOWN" :: Int
     pure native visible "android.view.View.VISIBLE" :: Int
     pure native invisible "android.view.View.INVISIBLE" :: Int
     native findViewById :: MutableIO View -> Int -> IO (MutableIO View)
@@ -11,6 +12,8 @@ data View = native android.view.View where
 data OnClickListener = native android.view.View.OnClickListener
 
 native onClick "froid.view.View.onClickHandler" :: (MutableIO View -> IO ()) -> IO (MutableIO OnClickListener)
+
+-- set on click and put in the view class
 
 setViewOnClick :: MutableIO View -> (MutableIO View -> IO ()) -> IO ()
 setViewOnClick v handler = do

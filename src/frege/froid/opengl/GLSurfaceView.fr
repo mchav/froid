@@ -71,7 +71,10 @@ native module where {
                 appliedThis = RunTM.<Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
                     cast(ote.apply(Thunk.lazy((android.opengl.GLSurfaceView) this)).call()).call();
             Func.U<Object, Boolean> res = RunTM.<Func.U<Object, Boolean>>cast(appliedThis.apply(Thunk.lazy(e)).call()).call();
-            return ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
+            boolean ret = ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
+            System.runFinalization();
+            System.gc();
+            return ret;
         }
 
         @Override
@@ -89,7 +92,10 @@ native module where {
                 appliedThis = RunTM.<Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
                     cast(ote.apply(Thunk.lazy((android.opengl.GLSurfaceView) this)).call()).call();
             Func.U<Object, Boolean> res = RunTM.<Func.U<Object, Boolean>>cast(appliedThis.apply(Thunk.lazy(e)).call()).call();
-            return ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
+            boolean ret = ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
+            System.runFinalization();
+            System.gc();
+            return ret;
         }
 
         @Override

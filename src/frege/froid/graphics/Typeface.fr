@@ -1,0 +1,6 @@
+module froid.graphics.Typeface where
+
+import froid.content.res.AssetManager
+
+data Typeface = native android.graphics.Typeface where
+    native createFromAsset "android.graphics.Typeface.createFromAsset" :: MutableIO AssetManager -> String -> IOMutable Typeface

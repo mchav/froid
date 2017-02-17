@@ -1,0 +1,4 @@
+module froid.text.Spannable where
+
+data Spannable = native android.text.Spannable where
+    native spanExclusiveExclusive "android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE" :: Int

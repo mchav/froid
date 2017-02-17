@@ -1,3 +1,6 @@
 module froid.content.Context where
 
-data Context = native android.content.Context
+import froid.content.res.AssetManager
+
+data Context = native android.content.Context where
+    native getAssets :: MutableIO Context -> IOMutable AssetManager

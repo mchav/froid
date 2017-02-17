@@ -1,0 +1,33 @@
+module froid.widget.LineNumberEditText where
+
+import froid.content.Context
+import froid.text.TextWatcher
+import froid.view.View
+import froid.Types
+
+data LineNumberEditText = native me.mgottein.LineNumberEditText where
+    native new :: MutableIO Context -> STMutable RealWorld LineNumberEditText
+    native addTextChangedListener :: MutableIO LineNumberEditText -> MutableIO TextWatcher -> IO ()
+    native setText :: MutableIO LineNumberEditText -> String -> IO ()
+    native getText :: MutableIO LineNumberEditText -> IO CharSequence
+    native getVisibility :: MutableIO LineNumberEditText -> IO Int
+    native setVisibility :: MutableIO LineNumberEditText -> Int -> IO ()
+
+getTextString :: MutableIO LineNumberEditText -> IO String
+getTextString tv = liftM (\s -> s.toString) tv.getText
+
+asLineNumberEditText :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO LineNumberEditText)
+asLineNumberEditText find res = do
+    v <- find res
+    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO LineNumberEditText)
+
+setOnEditTextChanged :: MutableIO LineNumberEditText -> TextWatcherDelegator -> IO ()
+setOnEditTextChanged e del = do
+    listener <- onTextChanged del
+    e.addTextChangedListener listener
+
+instance ViewSub LineNumberEditText where
+    native fromView "(me.mgottein.LineNumberEditText)" :: MutableIO View -> IO (ClassCastException | MutableIO LineNumberEditText)
+
+instance IsView LineNumberEditText where
+    native toView "(android.view.View)" :: MutableIO LineNumberEditText -> IO (ClassCastException | MutableIO View)

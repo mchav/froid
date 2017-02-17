@@ -1,0 +1,23 @@
+module froid.widget.ScrollView where
+
+import froid.content.Context
+import froid.graphics.Typeface
+import froid.view.View
+import froid.Types
+
+data ScrollView = native android.widget.ScrollView where
+    native fullScroll :: MutableIO ScrollView -> Int -> IO ()
+    native post :: MutableIO ScrollView -> MutableIO Runnable -> IO ()
+    native invalidate :: MutableIO ScrollView -> IO ()
+    native requestLayout :: MutableIO ScrollView -> IO ()
+
+asScrollView :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO ScrollView)
+asScrollView find res = do
+    v <- find res
+    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO ScrollView)
+
+instance ViewSub ScrollView where
+    native fromView "(android.widget.ScrollView)" :: MutableIO View -> IO (ClassCastException | MutableIO ScrollView)
+
+instance IsView ScrollView where
+    native toView "(android.view.View)" :: MutableIO ScrollView -> IO (ClassCastException | MutableIO View)

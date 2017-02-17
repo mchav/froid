@@ -1,3 +1,7 @@
 module froid.text.Editable where
 
-data Editable = native android.text.Editable
+import froid.text.style.ForegroundColorSpan
+
+data Editable = native android.text.Editable where
+    native toString :: MutableIO Editable -> IO String
+    native setSpan :: MutableIO Editable -> MutableIO ForegroundColorSpan -> Int -> Int -> Int -> IO ()

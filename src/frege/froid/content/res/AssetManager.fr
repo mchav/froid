@@ -1,0 +1,3 @@
+module froid.content.res.AssetManager where
+
+data AssetManager = native android.content.res.AssetManager
