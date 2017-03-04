@@ -1,0 +1,4 @@
+# (mkdir build\froid\app) 2> $null
+rtjar=$(java -verbose 2>/dev/null | head -n 1 | cut -c 9- | rev | cut -c 2- | rev)
+javac -cp "./lib/*" -bootclasspath $rtjar -source 1.7 -target 1.7 -d ./build ./src/java/*
+java -Xmx6072m -Xss10M -XX:MaxJavaStackTraceDepth=-1 -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none -cp "./lib/*" frege.compiler.Main -target 1.7 -d ./build ./src/frege/
