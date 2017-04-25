@@ -1,9 +1,16 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.Toast where
 
 import froid.content.Context
 
-data Toast = native android.widget.Toast where
-    native lengthLong "android.widget.Toast.LENGTH_LONG" :: Int
-    native lengthShort "android.widget.Toast.LENGTH_SHORT" :: Int
-    native makeText "android.widget.Toast.makeText" :: MutableIO Context -> String -> Int -> IO (MutableIO Toast)
-    native show :: MutableIO Toast -> IO ()
+data Toast = mutable native android.widget.Toast where
+    pure native lengthLong "android.widget.Toast.LENGTH_LONG" :: Int
+    pure native lengthShort "android.widget.Toast.LENGTH_SHORT" :: Int
+    native makeText "android.widget.Toast.makeText" :: Context -> String -> Int -> IO Toast
+    native show :: Toast -> IO ()

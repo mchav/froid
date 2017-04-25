@@ -1,67 +1,14 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.os.AsyncTask where
 
-data AsyncTask = native android.os.AsyncTask where
+-- TODO: find a way of properly modelling AsyncTask
 
-data Void = native java.lang.Void
+data AsyncTask = mutable native android.os.AsyncTask
 
-data AsyncTaskDelegator = AsyncTaskDelegator {doInBackground :: Maybe (IO String)
-                                             , onPostExecute :: Maybe (String -> IO ())
-                                             , onPreExecute  :: Maybe ()
-                                             , onProgressUpdate :: Maybe (IO ())
-                                             }
-
-defaultAsyncTaskDelegator :: AsyncTaskDelegator
-defaultAsyncTaskDelegator = AsyncTaskDelegator  { doInBackground = Nothing
-                                                , onPostExecute = Nothing
-                                                , onPreExecute = Nothing
-                                                , onProgressUpdate = Nothing
-                                                }
-
-native runAsyncTask "froid.os.AsyncTask.delegate" :: AsyncTaskDelegator -> IO ()
-
-native module where {
-    public static void delegate(TAsyncTaskDelegator delegator) {
-        FregeAsyncTask at = new FregeAsyncTask();
-        at.delegator = delegator;
-        at.execute();
-    }
-    static class FregeAsyncTask extends android.os.AsyncTask<Void, Void, String> {
-        TAsyncTaskDelegator delegator = null;
-
-        @Override
-        protected String doInBackground(Void... params) {
-            frege.prelude.PreludeBase.TMaybe<
-                Func.U<RealWorld, String>
-            > doInBackgroundDelegator = TAsyncTaskDelegator.doInBackground(delegator);
-            PreludeBase.TMaybe.DJust<
-                Func.U<RealWorld, String>
-            > justDelegator = doInBackgroundDelegator.asJust();
-            if (justDelegator == null) return "";
-            Func.U<RealWorld, String>
-                dib = (Func.U<RealWorld, String>) justDelegator.mem1.call();
-            return (String) frege.prelude.PreludeBase.TST.performUnsafe(dib
-                ).call();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            frege.prelude.PreludeBase.TMaybe<
-                Func.U<String, Func.U<RealWorld, Short>>
-            > onPostExecuteDelegator = TAsyncTaskDelegator.onPostExecute(delegator);
-            PreludeBase.TMaybe.DJust<
-                Func.U<String, Func.U<RealWorld, Short>>
-            > justDelegator = onPostExecuteDelegator.asJust();
-            if (justDelegator == null) return;
-            Func.U<String, Func.U<RealWorld, Short>>
-                ope = (Func.U<String, Func.U<RealWorld, Short>>) justDelegator.mem1.call();
-            Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(ope.apply(Thunk.lazy(result)).call()).call();
-            PreludeBase.TST.run(res).call();
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-    }
-}
+data Void = mutable native java.lang.Void

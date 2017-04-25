@@ -5,6 +5,6 @@
     you may not use this file except in compliance with the License.
 -}
 
-module froid.widget.Toolbar where
+module froid.app.Dialog where
 
-data Toolbar = mutable native android.widget.Toolbar
+data Dialog = mutable native android.app.Dialog

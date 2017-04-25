@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.content.Intent where
 
 import frege.java.Util
@@ -5,11 +12,11 @@ import froid.content.Context
 
 import froid.Types
 
-data Intent = native android.content.Intent where
-    native new :: () -> STMutable RealWorld Intent
-                | MutableIO Context -> Class a -> STMutable RealWorld Intent
-    native getBooleanExtra :: MutableIO Intent -> String -> Bool -> IO (Maybe Bool)
-    native getSerializableExtra :: MutableIO Intent -> String -> IOMutable SerializableObject
-    native putExtra :: MutableIO Intent -> String -> Bool -> IO ()
-                     | MutableIO Intent -> String -> MutableIO SerializableObject -> IO ()
+data Intent = mutable native android.content.Intent where
+    native new :: () -> IO Intent
+                | Context -> Class a -> IO Intent
+    native getBooleanExtra :: Intent -> String -> Bool -> IO (Maybe Bool)
+    native getSerializableExtra :: Intent -> String -> IO SerializableObject
+    native putExtra :: Intent -> String -> Bool -> IO ()
+                     | Intent -> String -> SerializableObject -> IO ()
 

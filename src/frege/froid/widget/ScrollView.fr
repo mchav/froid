@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.ScrollView where
 
 import froid.content.Context
@@ -5,19 +12,18 @@ import froid.graphics.Typeface
 import froid.view.View
 import froid.Types
 
-data ScrollView = native android.widget.ScrollView where
-    native fullScroll :: MutableIO ScrollView -> Int -> IO ()
-    native post :: MutableIO ScrollView -> MutableIO Runnable -> IO ()
-    native invalidate :: MutableIO ScrollView -> IO ()
-    native requestLayout :: MutableIO ScrollView -> IO ()
-
-asScrollView :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO ScrollView)
-asScrollView find res = do
-    v <- find res
-    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO ScrollView)
+data ScrollView = mutable native android.widget.ScrollView where
+    native fullScroll :: ScrollView -> Int -> IO ()
+    native post :: ScrollView -> MutableIO Runnable -> IO ()
+    native invalidate :: ScrollView -> IO ()
+    native requestLayout :: ScrollView -> IO ()
+    fromView :: (Int -> IO View) -> Int -> IO ScrollView
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO (ScrollView)
 
 instance ViewSub ScrollView where
-    native fromView "(android.widget.ScrollView)" :: MutableIO View -> IO (ClassCastException | MutableIO ScrollView)
+    native fromView' "(android.widget.ScrollView)" :: View -> IO (ClassCastException | ScrollView)
 
 instance IsView ScrollView where
-    native toView "(android.view.View)" :: MutableIO ScrollView -> IO (ClassCastException | MutableIO View)
+    native toView' "(android.view.View)" :: ScrollView -> IO (ClassCastException | View)

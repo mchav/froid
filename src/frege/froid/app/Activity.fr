@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.app.Activity where
 
 import froid.content.Context
@@ -6,19 +13,18 @@ import froid.os.Bundle
 import froid.view.View
 import froid.widget.Toolbar
     
-data Activity = native froid.app.java.NativeActivity.FregeActivity where
-    native getApplicationContext :: MutableIO Activity -> IO (MutableIO Context)
-    native resultOk "android.app.Activity.RESULT_OK" :: Int
-    native getIntent :: MutableIO Activity -> IO (MutableIO Intent) -- very few cases when this is null http://stackoverflow.com/questions/37856407/can-activity-getandroid.content.Intent-ever-return-null
-    native findViewById :: MutableIO Activity -> Int -> IO (MutableIO View)
-    native setContentView :: MutableIO Activity -> Int -> IO ()
-                           | MutableIO Activity -> MutableIO View -> IO ()
-    native setActionBar :: MutableIO Activity -> MutableIO Toolbar -> IO ()
-    native setResult :: MutableIO Activity -> Int -> MutableIO Intent -> IO ()
-    native startActivityForResult :: MutableIO Activity -> MutableIO Intent -> Int -> IO ()
+data Activity = mutable native froid.app.java.NativeActivity.FregeActivity where
+    pure native resultOk "android.app.Activity.RESULT_OK" :: Int
+    native getApplicationContext :: Activity -> IO Context
+    native getIntent :: Activity -> IO Intent -- very few cases when this is null http://stackoverflow.com/questions/37856407/can-activity-getandroid.content.Intent-ever-return-null
+    native findViewById :: Activity -> Int -> IO View
+    native setContentView :: Activity -> Int -> IO ()
+                           | Activity -> View -> IO ()
+    native setActionBar :: Activity -> Toolbar -> IO ()
+    native setResult :: Activity -> Int -> Intent -> IO ()
+    native startActivityForResult :: Activity -> Intent -> Int -> IO ()
     -- new methods
-    native setOnPause :: MutableIO Activity -> IO () -> IO ()
-    native setOnResume :: MutableIO Activity -> IO () -> IO ()
-    native setOnSavedInstanceState :: MutableIO Activity -> (MutableIO Bundle -> IO ()) -> IO ()
-    native setOnActivityResult :: MutableIO Activity -> (Int -> Int -> Maybe(MutableIO Intent) -> IO ()) -> IO ()
-
+    native setOnPause :: Activity -> IO () -> IO ()
+    native setOnResume :: Activity -> IO () -> IO ()
+    native setOnSavedInstanceState :: Activity -> (Bundle -> IO ()) -> IO ()
+    native setOnActivityResult :: Activity -> (Int -> Int -> Maybe Intent -> IO ()) -> IO ()

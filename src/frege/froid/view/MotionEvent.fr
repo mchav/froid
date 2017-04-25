@@ -1,7 +1,14 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.view.MotionEvent where
 
-data MotionEvent = native android.view.MotionEvent where
+data MotionEvent = mutable native android.view.MotionEvent where
     pure native actionMove "android.view.MotionEvent.ACTION_MOVE" :: Int
-    native getActionMasked :: MutableIO MotionEvent -> IO Int
-    native getX :: MutableIO MotionEvent -> IO Float
-    native getY :: MutableIO MotionEvent -> IO Float
+    native getActionMasked :: MotionEvent -> IO Int
+    native getX :: MotionEvent -> IO Float
+    native getY :: MotionEvent -> IO Float

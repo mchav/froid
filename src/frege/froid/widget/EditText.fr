@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.EditText where
 
 import froid.content.Context
@@ -5,29 +12,26 @@ import froid.text.TextWatcher
 import froid.view.View
 import froid.Types
 
-data EditText = native android.widget.EditText where
-    native new :: MutableIO Context -> STMutable RealWorld EditText
-    native addTextChangedListener :: MutableIO EditText -> MutableIO TextWatcher -> IO ()
-    native setText :: MutableIO EditText -> String -> IO ()
-    native getText :: MutableIO EditText -> IO CharSequence
-    native getVisibility :: MutableIO EditText -> IO Int
-    native setVisibility :: MutableIO EditText -> Int -> IO ()
-
-getTextString :: MutableIO EditText -> IO String
-getTextString tv = liftM (\s -> s.toString) tv.getText
-
-asEditText :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO EditText)
-asEditText find res = do
-    v <- find res
-    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO EditText)
-
-setOnEditTextChanged :: MutableIO EditText -> TextWatcherDelegator -> IO ()
-setOnEditTextChanged e del = do
-    listener <- onTextChanged del
-    e.addTextChangedListener listener
+data EditText = mutable native android.widget.EditText where
+    native new :: Context -> IO EditText
+    native addTextChangedListener :: EditText -> TextWatcher -> IO ()
+    native setText :: EditText -> String -> IO ()
+    native getText :: EditText -> IO CharSequence
+    native getVisibility :: EditText -> IO Int
+    native setVisibility :: EditText -> Int -> IO ()
+    fromView :: (Int -> IO View) -> Int -> IO EditText
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO (EditText)
+    getTextString :: EditText -> IO String
+    getTextString tv = liftM (\s -> s.toString) tv.getText
+    setOnEditTextChanged :: EditText -> TextWatcher.Delegator -> IO ()
+    setOnEditTextChanged e del = do
+        listener <- TextWatcher.onTextChanged del
+        e.addTextChangedListener listener
 
 instance ViewSub EditText where
-    native fromView "(android.widget.EditText)" :: MutableIO View -> IO (ClassCastException | MutableIO EditText)
+    native fromView' "(android.widget.EditText)" :: View -> IO (ClassCastException | EditText)
 
 instance IsView EditText where
-    native toView "(android.view.View)" :: MutableIO EditText -> IO (ClassCastException | MutableIO View)
+    native toView' "(android.view.View)" :: EditText -> IO (ClassCastException | View)

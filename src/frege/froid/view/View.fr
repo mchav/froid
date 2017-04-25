@@ -1,34 +1,38 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.view.View where
 
-data View = native android.view.View where
+data View = mutable native android.view.View where
     pure native focusDown "android.view.View.FOCUS_DOWN" :: Int
     pure native visible "android.view.View.VISIBLE" :: Int
     pure native invisible "android.view.View.INVISIBLE" :: Int
-    native findViewById :: MutableIO View -> Int -> IO (MutableIO View)
-    native setOnClickListener :: MutableIO View -> MutableIO OnClickListener -> IO ()
-    native setVisibility :: MutableIO View -> Int -> IO ()
-
-
-data OnClickListener = native android.view.View.OnClickListener
-
-native onClick "froid.view.View.onClickHandler" :: (MutableIO View -> IO ()) -> IO (MutableIO OnClickListener)
-
--- set on click and put in the view class
-
-setViewOnClick :: MutableIO View -> (MutableIO View -> IO ()) -> IO ()
-setViewOnClick v handler = do
-                  listener <- onClick handler
+    native findViewById :: View -> Int -> IO View
+    native setOnClickListener :: View -> OnClickListener -> IO ()
+    native setVisibility :: View -> Int -> IO ()
+    onClick :: View -> (View -> IO ()) -> IO ()
+    onClick v handler = do
+                  listener <- onClick' handler
                   v.setOnClickListener listener
+
+
+protected data OnClickListener = mutable native android.view.View.OnClickListener
+
+native onClick' "froid.view.View.onClickHandler" :: (View -> IO ()) -> IO OnClickListener
 
 native module where {
     public static android.view.View.OnClickListener
-        onClickHandler(final frege.run7.Func.U<android.view.View, frege.run7.Func.U<RealWorld,Short>> lambda) {
+        onClickHandler(final Func.U<android.view.View, Func.U<RealWorld,Short>> lambda) {
         return new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
                 try {
-                    final frege.run7.Func.U<Object,Short> res = RunTM.<frege.run7.Func.U<Object,Short>>cast(lambda.apply(Thunk.lazy(view)).call()).call();
-                    frege.prelude.PreludeBase.TST.run(res).call();
+                    PreludeBase.TST.performUnsafe(
+                        lambda.apply(Thunk.lazy(view)).call()).call();
                 } catch(RuntimeException re) {
                     re.printStackTrace();
                     throw re;

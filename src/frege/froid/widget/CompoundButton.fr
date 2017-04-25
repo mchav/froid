@@ -1,18 +1,17 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.CompoundButton where
 
-data CompoundButton = native android.widget.CompoundButton
+data CompoundButton = mutable native android.widget.CompoundButton
 
-data OnCheckedChangeListener = native android.widget.CompoundButton.OnCheckedChangeListener
+data OnCheckedChangeListener = mutable native android.widget.CompoundButton.OnCheckedChangeListener
 
-native checkedChanged "froid.widget.CompoundButton.newCheckedChangeListener" :: (MutableIO CompoundButton -> Bool -> IO ()) -> IO (MutableIO OnCheckedChangeListener)
-
-{-
--- FIXME: Make general
-setOnCheckChanged :: MutableIO CheckBox -> (MutableIO CompoundButton -> Boolean -> IO ()) -> IO ()
-setOnCheckChanged cb lambda = do
-    listener <- checkedChanged lambda
-    cb.setOnCheckedChangeListener cb listener
--}
+native checkedChanged "froid.widget.CompoundButton.newCheckedChangeListener" :: (CompoundButton -> Bool -> IO ()) -> IO OnCheckedChangeListener
 
 native module where {
     private static android.widget.CompoundButton.OnCheckedChangeListener
@@ -21,9 +20,9 @@ native module where {
             @Override
             public void onCheckedChanged (android.widget.CompoundButton buttonView, boolean isChecked) {
                 try {
-                    Func.U<Boolean, Func.U<Object, Short>> appliedButton = RunTM.<Func.U<Boolean, Func.U<Object, Short>>>cast(lambda.apply(Thunk.<android.widget.CompoundButton>lazy(buttonView)).call()).call();
-                    Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(appliedButton.apply(Thunk.<Boolean>lazy(isChecked)).call()).call();
-                    frege.prelude.PreludeBase.TST.run(res).call();
+                    PreludeBase.TST.performUnsafe(
+                        lambda.apply(Thunk.lazy(buttonView)).call()
+                        .apply(Thunk.<Boolean>lazy(isChecked)).call()).call();
                 } catch(RuntimeException re) {
                     re.printStackTrace();
                     throw re;

@@ -1,16 +1,23 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.opengl.glSurfaceView.java.NativeRenderer where
 
 import froid.javax.microedition.khronos.opengles.GL10
 import froid.javax.microedition.khronos.egl.EGLConfig
 
-data GlsvRendererDelegator = GlsvRendererDelegator { onDrawFrame      :: Maybe (MutableIO GL10 -> IO ())
-                                                   , onSurfaceCreated :: Maybe (MutableIO GL10 -> MutableIO EGLConfig -> IO ())
-                                                   , onSurfaceChanged :: Maybe (MutableIO GL10 -> Int -> Int -> IO ())
-                                                   }
+data Delegator = Delegator { onDrawFrame    :: Maybe (MutableIO GL10 -> IO ())
+                           , onSurfaceCreated :: Maybe (MutableIO GL10 -> MutableIO EGLConfig -> IO ())
+                           , onSurfaceChanged :: Maybe (MutableIO GL10 -> Int -> Int -> IO ())
+                           }
 
 native module where {
 
-    public static FregeRenderer delegate(TGlsvRendererDelegator delegator) {
+    public static FregeRenderer delegate(TDelegator delegator) {
         FregeRenderer renderer = new FregeRenderer();
         renderer.delegator = delegator;
         return renderer;
@@ -18,57 +25,30 @@ native module where {
 
     public static class FregeRenderer implements android.opengl.GLSurfaceView.Renderer {
 
-        TGlsvRendererDelegator delegator = null;
+        TDelegator delegator = null;
 
         public void onDrawFrame(javax.microedition.khronos.opengles.GL10 gl) {
-            frege.prelude.PreludeBase.TMaybe<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<RealWorld, Short>>
-            > onDrawFrameDelegator = TGlsvRendererDelegator.onDrawFrame(delegator);
-            PreludeBase.TMaybe.DJust<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<RealWorld, Short>>
-            > justDelegator = onDrawFrameDelegator.asJust();
-            if (justDelegator == null) return;
-            Func.U<javax.microedition.khronos.opengles.GL10, Func.U<RealWorld, Short>>
-                odf = (Func.U<javax.microedition.khronos.opengles.GL10, Func.U<RealWorld, Short>>) justDelegator.mem1.call();
-            Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(odf.apply(Thunk.lazy(gl)).call()).call();
-            PreludeBase.TST.run(res).call();
+            if (TDelegator.onDrawFrame(delegator).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.onDrawFrame(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(gl)).call()).call();
         }
 
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
-             frege.prelude.PreludeBase.TMaybe<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>>
-            > onSurfaceChangedDelegator = TGlsvRendererDelegator.onSurfaceChanged(delegator);
-            PreludeBase.TMaybe.DJust<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>>
-            > justDelegator = onSurfaceChangedDelegator.asJust();
-            if (justDelegator == null) return;
-            Func.U<javax.microedition.khronos.opengles.GL10, Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>>
-                osc = (Func.U<javax.microedition.khronos.opengles.GL10, Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>>) justDelegator.mem1.call();
-            Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>
-                appliedGL = RunTM.<Func.U<Integer, Func.U<Integer, Func.U<RealWorld, Short>>>>
-                    cast(osc.apply(Thunk.lazy(gl)).call()).call();
-            Func.U<Integer, Func.U<RealWorld, Short>>
-                appliedWidth = RunTM.<Func.U<Integer, Func.U<RealWorld, Short>>>
-                    cast(appliedGL.apply(Thunk.<Integer>lazy(width)).call()).call();
-            Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(appliedWidth.apply(Thunk.<Integer>lazy(height)).call()).call();
-            PreludeBase.TST.run(res).call();
+            if (TDelegator.onSurfaceChanged(delegator).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.onSurfaceChanged(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(gl)).call()
+                            .apply(Thunk.<Integer>lazy(width)).call()
+                            .apply(Thunk.<Integer>lazy(height)).call()).call();
         }
 
         public void onSurfaceCreated(javax.microedition.khronos.opengles.GL10 gl, javax.microedition.khronos.egl.EGLConfig config) {
-            frege.prelude.PreludeBase.TMaybe<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>>
-            > onSurfaceCreatedDelegator = TGlsvRendererDelegator.onSurfaceCreated(delegator);
-            PreludeBase.TMaybe.DJust<
-                Func.U<javax.microedition.khronos.opengles.GL10, Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>>
-            > justDelegator = onSurfaceCreatedDelegator.asJust();
-            if (justDelegator == null) return;
-            Func.U<javax.microedition.khronos.opengles.GL10, Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>>
-                osc = (Func.U<javax.microedition.khronos.opengles.GL10, Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>>) justDelegator.mem1.call();
-            Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>
-                appliedGL = RunTM.<Func.U<javax.microedition.khronos.egl.EGLConfig, Func.U<RealWorld, Short>>>
-                    cast(osc.apply(Thunk.lazy(gl)).call()).call();
-            Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(appliedGL.apply(Thunk.lazy(config)).call()).call();
-            PreludeBase.TST.run(res).call();
+            if (TDelegator.onSurfaceCreated(delegator).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.onSurfaceCreated(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(gl)).call()
+                            .apply(Thunk.lazy(config)).call()).call();
         }
     }
 }

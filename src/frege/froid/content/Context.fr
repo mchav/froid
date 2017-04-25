@@ -1,6 +1,13 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.content.Context where
 
 import froid.content.res.AssetManager
 
-data Context = native android.content.Context where
-    native getAssets :: MutableIO Context -> IOMutable AssetManager
+data Context = mutable native android.content.Context where
+    native getAssets :: Context -> IO AssetManager

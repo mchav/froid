@@ -1,7 +1,14 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.opengl.glSurfaceView.Renderer where
 
 import froid.opengl.glSurfaceView.java.NativeRenderer
 
-data GLSurfaceViewRenderer = native froid.opengl.glSurfaceView.java.NativeRenderer.FregeRenderer
-
-native mkGLSurfaceViewRenderer "froid.opengl.glSurfaceView.java.NativeRenderer.delegate" :: GlsvRendererDelegator -> STMutable RealWorld GLSurfaceViewRenderer
+data GLSurfaceViewRenderer = mutable native froid.opengl.glSurfaceView.java.NativeRenderer.FregeRenderer where
+    native mk "froid.opengl.glSurfaceView.java.NativeRenderer.delegate" :: NativeRenderer.Delegator -> IO GLSurfaceViewRenderer
+    defaultDelegator = NativeRenderer.Delegator { onDrawFrame = Nothing, onSurfaceCreated = Nothing, onSurfaceChanged = Nothing }

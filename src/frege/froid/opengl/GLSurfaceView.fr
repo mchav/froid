@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.opengl.GLSurfaceView where
 
 import froid.content.Context
@@ -6,42 +13,40 @@ import froid.view.MotionEvent
 import froid.view.View
 import froid.Types
 
-data GLSurfaceView = native android.opengl.GLSurfaceView where
+data GLSurfaceView = mutable native android.opengl.GLSurfaceView where
+    defaultDelegator = Delegator { onPause          = Nothing
+                                 , onResume         = Nothing
+                                 , onTouchEvent     = Nothing
+                                 , onTrackballEvent = Nothing
+                                 }
+    native mk "froid.opengl.GLSurfaceView.delegate" :: Context -> Delegator -> IO GLSurfaceView
     pure native renderModeWhenDirty "android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY" :: Int
-    native onPause :: MutableIO GLSurfaceView -> IO ()
-    native onResume :: MutableIO GLSurfaceView -> IO ()
-    native requestFocus :: MutableIO GLSurfaceView -> IO ()
-    native setFocusableInTouchMode :: MutableIO GLSurfaceView -> Bool -> IO ()
-    native onTrackballEvent :: MutableIO GLSurfaceView -> MutableIO MotionEvent -> IO Bool
-    native onTouchEvent :: MutableIO GLSurfaceView -> MutableIO MotionEvent -> IO Bool
-    native setRenderer :: MutableIO GLSurfaceView -> MutableIO GLSurfaceViewRenderer -> IO ()
-    native setRenderMode :: MutableIO GLSurfaceView -> Int -> IO ()
-    native requestRender :: MutableIO GLSurfaceView -> IO ()
-    asView :: MutableIO GLSurfaceView -> IO (MutableIO View)
-    asView sv = (toView sv >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO View)
+    native onPause :: GLSurfaceView -> IO ()
+    native onResume :: GLSurfaceView -> IO ()
+    native requestFocus :: GLSurfaceView -> IO ()
+    native setFocusableInTouchMode :: GLSurfaceView -> Bool -> IO ()
+    native onTrackballEvent :: GLSurfaceView -> MotionEvent -> IO Bool
+    native onTouchEvent :: GLSurfaceView -> MotionEvent -> IO Bool
+    native setRenderer :: GLSurfaceView -> GLSurfaceViewRenderer -> IO ()
+    native setRenderMode :: GLSurfaceView -> Int -> IO ()
+    native requestRender :: GLSurfaceView -> IO ()
+    toView :: GLSurfaceView -> IO View
+    toView sv = (toView' sv >>= either (\cce -> error $ "Cast failed.") return) :: IO (View)
 
 instance ViewSub GLSurfaceView where
-    native fromView "(android.opengl.GLSurfaceView)" :: MutableIO View -> IO (ClassCastException | MutableIO GLSurfaceView)
+    native fromView' "(android.opengl.GLSurfaceView)" :: View -> IO (ClassCastException | GLSurfaceView)
 
 instance IsView GLSurfaceView where
-    native toView "(android.view.View)" :: MutableIO GLSurfaceView -> IO (ClassCastException | MutableIO View)
+    native toView' "(android.view.View)" :: GLSurfaceView -> IO (ClassCastException | View)
 
-data GLSurfaceViewDelegator = GLSurfaceViewDelegator { onPause          :: Maybe (MutableIO GLSurfaceView -> IO ())
-                                                     , onResume         :: Maybe (MutableIO GLSurfaceView -> IO ())
-                                                     , onTouchEvent     :: Maybe (MutableIO GLSurfaceView -> MutableIO MotionEvent -> IO Bool)
-                                                     , onTrackballEvent :: Maybe (MutableIO GLSurfaceView -> MutableIO MotionEvent -> IO Bool)
-                                                     }
-
-defaultGLSurfaceView = GLSurfaceViewDelegator { onPause          = Nothing
-                                              , onResume         = Nothing
-                                              , onTouchEvent     = Nothing
-                                              , onTrackballEvent = Nothing
-                                              }
-
-native mkGLSurfaceView "froid.opengl.GLSurfaceView.delegate" :: MutableIO Context -> GLSurfaceViewDelegator -> STMutable RealWorld GLSurfaceView
+data Delegator = Delegator { onPause          :: Maybe (GLSurfaceView -> IO ())
+                           , onResume         :: Maybe (GLSurfaceView -> IO ())
+                           , onTouchEvent     :: Maybe (GLSurfaceView -> MotionEvent -> IO Bool)
+                           , onTrackballEvent :: Maybe (GLSurfaceView -> MotionEvent -> IO Bool)
+                           }
 
 native module where {
-    public static android.opengl.GLSurfaceView delegate(android.content.Context context, TGLSurfaceViewDelegator delegator) {
+    public static android.opengl.GLSurfaceView delegate(android.content.Context context, TDelegator delegator) {
         FregeGLSurfaceView glsv = new FregeGLSurfaceView(context);
         glsv.delegator = delegator;
         return (android.opengl.GLSurfaceView) glsv;
@@ -50,7 +55,7 @@ native module where {
 
     public static class FregeGLSurfaceView extends android.opengl.GLSurfaceView {
 
-        TGLSurfaceViewDelegator delegator = null;
+        TDelegator delegator = null;
 
         public FregeGLSurfaceView(android.content.Context context) {
             super(context);
@@ -58,9 +63,9 @@ native module where {
 
         @Override
         public boolean onTrackballEvent(android.view.MotionEvent e) {
-            frege.prelude.PreludeBase.TMaybe<
+            PreludeBase.TMaybe<
                 Func.U<android.opengl.GLSurfaceView, Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
-            > onTrackballEventDelegator = TGLSurfaceViewDelegator.onTrackballEvent(delegator);
+            > onTrackballEventDelegator = TDelegator.onTrackballEvent(delegator);
             PreludeBase.TMaybe.DJust<
                 Func.U<android.opengl.GLSurfaceView, Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
             > justDelegator = onTrackballEventDelegator.asJust();
@@ -71,17 +76,14 @@ native module where {
                 appliedThis = RunTM.<Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
                     cast(ote.apply(Thunk.lazy((android.opengl.GLSurfaceView) this)).call()).call();
             Func.U<Object, Boolean> res = RunTM.<Func.U<Object, Boolean>>cast(appliedThis.apply(Thunk.lazy(e)).call()).call();
-            boolean ret = ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
-            System.runFinalization();
-            System.gc();
-            return ret;
+            return ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
         }
 
         @Override
         public boolean onTouchEvent(android.view.MotionEvent e) {
-            frege.prelude.PreludeBase.TMaybe<
+            PreludeBase.TMaybe<
                 Func.U<android.opengl.GLSurfaceView, Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
-            > onTouchEventDelegator = TGLSurfaceViewDelegator.onTouchEvent(delegator);
+            > onTouchEventDelegator = TDelegator.onTouchEvent(delegator);
             PreludeBase.TMaybe.DJust<
                 Func.U<android.opengl.GLSurfaceView, Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
             > justDelegator = onTouchEventDelegator.asJust();
@@ -92,18 +94,15 @@ native module where {
                 appliedThis = RunTM.<Func.U<android.view.MotionEvent, Func.U<RealWorld, Boolean>>>
                     cast(ote.apply(Thunk.lazy((android.opengl.GLSurfaceView) this)).call()).call();
             Func.U<Object, Boolean> res = RunTM.<Func.U<Object, Boolean>>cast(appliedThis.apply(Thunk.lazy(e)).call()).call();
-            boolean ret = ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
-            System.runFinalization();
-            System.gc();
-            return ret;
+            return ((Boolean)PreludeBase.TST.run(res).call()).booleanValue();
         }
 
         @Override
         public void onResume() {
             super.onResume();
-            frege.prelude.PreludeBase.TMaybe<
+            PreludeBase.TMaybe<
                 Func.U<android.opengl.GLSurfaceView, Func.U<RealWorld, Short>>
-            > onResumeDelegator = TGLSurfaceViewDelegator.onResume(delegator);
+            > onResumeDelegator = TDelegator.onResume(delegator);
             PreludeBase.TMaybe.DJust<
                 Func.U<android.opengl.GLSurfaceView, Func.U<RealWorld, Short>>
             > justDelegator = onResumeDelegator.asJust();
@@ -117,9 +116,9 @@ native module where {
         @Override
         public void onPause() {
             super.onPause();
-            frege.prelude.PreludeBase.TMaybe<
+            PreludeBase.TMaybe<
                 Func.U<android.opengl.GLSurfaceView, Func.U<RealWorld, Short>>
-            > onPauseDelegator = TGLSurfaceViewDelegator.onPause(delegator);
+            > onPauseDelegator = TDelegator.onPause(delegator);
             PreludeBase.TMaybe.DJust<
                 Func.U<android.opengl.GLSurfaceView, Func.U<RealWorld, Short>>
             > justDelegator = onPauseDelegator.asJust();

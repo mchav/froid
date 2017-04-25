@@ -1,13 +1,20 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.java.nio.ByteBuffer where
 
 import froid.java.nio.IntBuffer
 
-data ByteBuffer = native java.nio.ByteBuffer where
-    native allocateDirect "java.nio.ByteBuffer.allocateDirect" :: Int -> STMutable RealWorld ByteBuffer
-    native asIntBuffer :: MutableIO ByteBuffer -> IOMutable IntBuffer
-    native order :: MutableIO ByteBuffer -> MutableIO ByteOrder -> IO ()
-    native put :: MutableIO ByteBuffer -> ArrayOf RealWorld Byte -> IO ()
-    native position :: MutableIO ByteBuffer -> Int -> IO ()
+data ByteBuffer = mutable native java.nio.ByteBuffer where
+    native allocateDirect "java.nio.ByteBuffer.allocateDirect" :: Int -> IO ByteBuffer
+    native asIntBuffer :: ByteBuffer -> IO IntBuffer
+    native order :: ByteBuffer -> ByteOrder -> IO ()
+    native put :: ByteBuffer -> ArrayOf RealWorld Byte -> IO ()
+    native position :: ByteBuffer -> Int -> IO ()
 
-data ByteOrder = native java.nio.ByteOrder where
-    native nativeOrder "java.nio.ByteOrder.nativeOrder" :: () -> IOMutable ByteOrder
+data ByteOrder = mutable native java.nio.ByteOrder where
+    native nativeOrder "java.nio.ByteOrder.nativeOrder" :: () -> IO ByteOrder

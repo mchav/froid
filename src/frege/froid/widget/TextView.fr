@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.TextView where
 
 import froid.content.Context
@@ -5,27 +12,27 @@ import froid.graphics.Typeface
 import froid.view.View
 import froid.Types
 
-data TextView = native android.widget.TextView where
-    native new :: MutableIO Context -> STMutable RealWorld TextView
-    native append :: MutableIO TextView -> String -> IO ()
-    native setText :: MutableIO TextView -> String -> IO ()
-    native getText :: MutableIO TextView -> IO CharSequence
-    native getVisibility :: MutableIO TextView -> IO Int
-    native setVisibility :: MutableIO TextView -> Int -> IO ()
-    native setTypeface :: MutableIO TextView -> MutableIO Typeface -> IO ()
-    native post :: MutableIO TextView -> MutableIO Runnable -> IO ()
-    native invalidate :: MutableIO TextView -> IO ()
-    native requestLayout :: MutableIO TextView -> IO ()
-    getTextString :: MutableIO TextView -> IO String
+data TextView = mutable native android.widget.TextView where
+    native new :: Context -> IO TextView
+    native append :: TextView -> String -> IO ()
+    native setText :: TextView -> String -> IO ()
+    native getText :: TextView -> IO CharSequence
+    native getVisibility :: TextView -> IO Int
+    native setVisibility :: TextView -> Int -> IO ()
+    native setTypeface :: TextView -> Typeface -> IO ()
+    native post :: TextView -> MutableIO Runnable -> IO ()
+    native invalidate :: TextView -> IO ()
+    native requestLayout :: TextView -> IO ()
+    getTextString :: TextView -> IO String
     getTextString tv = liftM (\s -> s.toString) tv.getText
+    fromView :: (Int -> IO View) -> Int -> IO TextView
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO (TextView)
 
-asTextView :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO TextView)
-asTextView find res = do
-    v <- find res
-    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO TextView)
 
 instance ViewSub TextView where
-    native fromView "(android.widget.TextView)" :: MutableIO View -> IO (ClassCastException | MutableIO TextView)
+    native fromView' "(android.widget.TextView)" :: View -> IO (ClassCastException | TextView)
 
 instance IsView TextView where
-    native toView "(android.view.View)" :: MutableIO TextView -> IO (ClassCastException | MutableIO View)
+    native toView' "(android.view.View)" :: TextView -> IO (ClassCastException | View)

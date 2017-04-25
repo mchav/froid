@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.javax.microedition.khronos.opengles.GL10 where
 
 import froid.java.nio.ByteBuffer
@@ -7,7 +14,7 @@ import froid.java.nio.ShortBuffer
 import froid.java.nio.CharBuffer
 import froid.java.nio.DoubleBuffer
 
-data GL10 = native javax.microedition.khronos.opengles.GL10 where
+data GL10 = mutable native javax.microedition.khronos.opengles.GL10 where
     pure native glColorBufferBit "javax.microedition.khronos.opengles.GL10.GL_COLOR_BUFFER_BIT" :: Int
     pure native glDepthBufferBit "javax.microedition.khronos.opengles.GL10.GL_DEPTH_BUFFER_BIT" :: Int
     pure native glModelView "javax.microedition.khronos.opengles.GL10.GL_MODELVIEW" :: Int
@@ -24,35 +31,35 @@ data GL10 = native javax.microedition.khronos.opengles.GL10 where
     pure native glTriangle "javax.microedition.khronos.opengles.GL10.GL_TRIANGLES" :: Int
     pure native glUnsignedByte "javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE" :: Int
     pure native glCW "javax.microedition.khronos.opengles.GL10.GL_CW" :: Int
-    native glClear :: MutableIO GL10 -> Int -> IO ()
-    native glClearColor :: MutableIO GL10 -> Int -> Int -> Int -> Int -> IO ()
-    native glMatrixMode :: MutableIO GL10 -> Int -> IO ()
-    native glLoadIdentity :: MutableIO GL10 -> IO ()
-    native glTranslatef :: MutableIO GL10 -> Float -> Float -> Float -> IO ()
-    native glRotatef :: MutableIO GL10 -> Float -> Float -> Float -> Float -> IO ()
-    native glEnableClientState :: MutableIO GL10 -> Int -> IO ()
-    native glViewport :: MutableIO GL10 -> Int -> Int -> Int -> Int -> IO ()
-    native glFrustumf :: MutableIO GL10 -> Float -> Float -> Float -> Float -> Float -> Float -> IO ()
-    native glDisable :: MutableIO GL10 -> Int -> IO ()
-    native glEnable :: MutableIO GL10 -> Int -> IO ()
-    native glHint :: MutableIO GL10 -> Int -> Int -> IO ()
-    native glShadeModel :: MutableIO GL10 -> Int -> IO ()
-    native glFrontFace :: MutableIO GL10 -> Int -> IO ()
-    native glColorPointer :: MutableIO GL10 -> Int -> Int -> Int -> MutableIO ByteBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO CharBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO DoubleBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO ShortBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO LongBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO IntBuffer -> IO ()
-    native glVertexPointer :: MutableIO GL10 -> Int -> Int -> Int -> MutableIO ByteBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO CharBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO DoubleBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO ShortBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO LongBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO IntBuffer -> IO ()
-    native glDrawElements  :: MutableIO GL10 -> Int -> Int -> Int -> MutableIO ByteBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO CharBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO DoubleBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO ShortBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO LongBuffer -> IO ()
-                           | MutableIO GL10 -> Int -> Int -> Int -> MutableIO IntBuffer -> IO ()
+    native glClear :: GL10 -> Int -> IO ()
+    native glClearColor :: GL10 -> Int -> Int -> Int -> Int -> IO ()
+    native glMatrixMode :: GL10 -> Int -> IO ()
+    native glLoadIdentity :: GL10 -> IO ()
+    native glTranslatef :: GL10 -> Float -> Float -> Float -> IO ()
+    native glRotatef :: GL10 -> Float -> Float -> Float -> Float -> IO ()
+    native glEnableClientState :: GL10 -> Int -> IO ()
+    native glViewport :: GL10 -> Int -> Int -> Int -> Int -> IO ()
+    native glFrustumf :: GL10 -> Float -> Float -> Float -> Float -> Float -> Float -> IO ()
+    native glDisable :: GL10 -> Int -> IO ()
+    native glEnable :: GL10 -> Int -> IO ()
+    native glHint :: GL10 -> Int -> Int -> IO ()
+    native glShadeModel :: GL10 -> Int -> IO ()
+    native glFrontFace :: GL10 -> Int -> IO ()
+    native glColorPointer :: GL10 -> Int -> Int -> Int -> ByteBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> CharBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> DoubleBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> ShortBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> LongBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> IntBuffer -> IO ()
+    native glVertexPointer :: GL10 -> Int -> Int -> Int -> ByteBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> CharBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> DoubleBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> ShortBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> LongBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> IntBuffer -> IO ()
+    native glDrawElements  :: GL10 -> Int -> Int -> Int -> ByteBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> CharBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> DoubleBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> ShortBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> LongBuffer -> IO ()
+                           | GL10 -> Int -> Int -> Int -> IntBuffer -> IO ()

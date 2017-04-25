@@ -1,3 +1,10 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.CheckBox where
 
 import froid.view.View
@@ -5,23 +12,20 @@ import froid.widget.CompoundButton
 
 import froid.Types
 
-data CheckBox = native android.widget.CheckBox where
-    native setChecked :: MutableIO CheckBox -> Bool -> IO ()
-    native setOnCheckedChangeListener :: MutableIO CheckBox -> MutableIO OnCheckedChangeListener -> IO ()
+data CheckBox = mutable native android.widget.CheckBox where
+    native setChecked :: CheckBox -> Bool -> IO ()
+    native setOnCheckedChangeListener :: CheckBox -> OnCheckedChangeListener -> IO ()
+    fromView :: (Int -> IO View) -> Int -> IO CheckBox
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO CheckBox
+    onCheckChanged :: CheckBox -> (CompoundButton -> Bool -> IO ()) -> IO ()
+    onCheckChanged cb lambda = do
+        listener <- checkedChanged lambda
+        cb.setOnCheckedChangeListener listener
 
 instance ViewSub CheckBox where
-    native fromView "(android.widget.CheckBox)" :: MutableIO View -> IO (ClassCastException | MutableIO CheckBox)
+    native fromView' "(android.widget.CheckBox)" :: View -> IO (ClassCastException | CheckBox)
 
 instance IsView CheckBox where
-    native toView "(android.view.View)" :: MutableIO CheckBox -> IO (ClassCastException | MutableIO View)
-
-asCheckBox :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO CheckBox)
-asCheckBox find res = do
-    v <- find res
-    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO CheckBox)
-
--- FIXME: Make general
-setOnCheckChanged :: MutableIO CheckBox -> (MutableIO CompoundButton -> Bool -> IO ()) -> IO ()
-setOnCheckChanged cb lambda = do
-    listener <- checkedChanged lambda
-    cb.setOnCheckedChangeListener listener
+    native toView' "(android.view.View)" :: CheckBox -> IO (ClassCastException | View)

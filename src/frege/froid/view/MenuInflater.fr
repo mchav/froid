@@ -1,6 +1,13 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.view.MenuInflater where
 
 import froid.view.Menu
 
-data MenuInflater = native android.view.MenuInflater where
-	native inflate :: MutableIO MenuInflater -> Int -> MutableIO Menu -> IO ()
+data MenuInflater = mutable native android.view.MenuInflater where
+	native inflate :: MenuInflater -> Int -> Menu -> IO ()

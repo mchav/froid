@@ -1,13 +1,20 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.os.Bundle where
 
 import froid.Types
 
-data Bundle = native android.os.Bundle where
-    native new :: () -> STMutable RealWorld Bundle
-    native getChar :: MutableIO Bundle -> String -> IO (Maybe Char)
-    native getCharSequence :: MutableIO Bundle -> String -> IO (Maybe CharSequence)
-    native getSerializable :: MutableIO Bundle -> String -> IO (Maybe (MutableIO SerializableObject))
-    native putChar :: MutableIO Bundle -> String -> Char -> IO ()
-    native putSerializable :: MutableIO Bundle -> String -> MutableIO SerializableObject -> IO ()
-    native putCharSequence :: MutableIO Bundle -> String -> CharSequence -> IO ()
-    					    | MutableIO Bundle -> String -> String -> IO ()
+data Bundle = mutable native android.os.Bundle where
+    native new :: () -> IO Bundle
+    native getChar :: Bundle -> String -> IO (Maybe Char)
+    native getCharSequence :: Bundle -> String -> IO (Maybe CharSequence)
+    native getSerializable :: Bundle -> String -> IO (Maybe (SerializableObject))
+    native putChar :: Bundle -> String -> Char -> IO ()
+    native putSerializable :: Bundle -> String -> SerializableObject -> IO ()
+    native putCharSequence :: Bundle -> String -> CharSequence -> IO ()
+    					    | Bundle -> String -> String -> IO ()

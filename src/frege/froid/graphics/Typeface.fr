@@ -1,6 +1,13 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.graphics.Typeface where
 
 import froid.content.res.AssetManager
 
-data Typeface = native android.graphics.Typeface where
-    native createFromAsset "android.graphics.Typeface.createFromAsset" :: MutableIO AssetManager -> String -> IOMutable Typeface
+data Typeface = mutable native android.graphics.Typeface where
+    native createFromAsset "android.graphics.Typeface.createFromAsset" :: AssetManager -> String -> IO Typeface

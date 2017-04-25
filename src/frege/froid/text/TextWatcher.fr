@@ -1,38 +1,38 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.text.TextWatcher where
 
 import froid.text.Editable
 
-data TextWatcher = native android.text.TextWatcher
+data TextWatcher = mutable native android.text.TextWatcher where
+    defaultDelegator = TextWatcher.Delegator { beforeTextChanged = Nothing, onTextChanged = Nothing, afterTextChanged = Nothing }
+    native onTextChanged "froid.text.TextWatcher.textChangedHandler" :: Delegator -> IO (TextWatcher)
 
-data TextWatcherDelegator = TextWatcherDelegator { beforeTextChanged :: Maybe (CharSequence -> Int -> Int -> Int -> IO ())
-                                                , onTextChanged :: Maybe (CharSequence -> Int -> Int -> Int -> IO ())
-                                                , afterTextChanged :: Maybe (MutableIO Editable -> IO ())
-                                                }
-
-defaultTextWatcherDelegator = TextWatcherDelegator { beforeTextChanged = Nothing, onTextChanged = Nothing, afterTextChanged = Nothing }
-
-native onTextChanged "froid.text.TextWatcher.textChangedHandler" :: TextWatcherDelegator -> IO (MutableIO TextWatcher)
+data Delegator = Delegator { beforeTextChanged :: Maybe (CharSequence -> Int -> Int -> Int -> IO ())
+                           , onTextChanged :: Maybe (CharSequence -> Int -> Int -> Int -> IO ())
+                           , afterTextChanged :: Maybe (Editable -> IO ())
+                           }
 
 native module where {
     public static android.text.TextWatcher
-        textChangedHandler(final TTextWatcherDelegator del) {
+        textChangedHandler(final TDelegator del) {
         return new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 try {
-                    frege.prelude.PreludeBase.TMaybe<
-                        frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>
-                    > beforeTextChangedDelegator = TTextWatcherDelegator.beforeTextChanged(del);
-                    PreludeBase.TMaybe.DJust<
-                        frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>
-                    > justDelegator = beforeTextChangedDelegator.asJust();
-                    if (justDelegator == null) return;
-                    frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>> btc = (frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>) justDelegator.mem1.call();
-                    frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>> appliedSeq = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>>>cast(btc.apply(Thunk.<CharSequence>lazy(s)).call()).call();
-                    final frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>> appliedStart = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>>cast(appliedSeq.apply(Thunk.<Integer>lazy(start)).call()).call();
-                    final frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>> appliedCount = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>cast(appliedStart.apply(Thunk.<Integer>lazy(count)).call()).call();
-                    final frege.run7.Func.U<Object, Short> res = RunTM.<frege.run7.Func.U<Object, Short>>cast(appliedCount.apply(Thunk.<Integer>lazy(after)).call()).call();
-                    frege.prelude.PreludeBase.TST.run(res).call();
+                    if (TDelegator.beforeTextChanged(del).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.beforeTextChanged(del).asJust().mem1.call()
+                            .apply(Thunk.<CharSequence>lazy(s)).call()
+                            .apply(Thunk.<Integer>lazy(start)).call()
+                            .apply(Thunk.<Integer>lazy(count)).call()
+                            .apply(Thunk.<Integer>lazy(after)).call()).call();
+
                 } catch(RuntimeException re) {
                     re.printStackTrace();
                     throw re;
@@ -42,19 +42,13 @@ native module where {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
-                    frege.prelude.PreludeBase.TMaybe<
-                        frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>
-                    > onTextChangedDelegator = TTextWatcherDelegator.onTextChanged(del);
-                    PreludeBase.TMaybe.DJust<
-                        frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>
-                    > justDelegator = onTextChangedDelegator.asJust();
-                    if (justDelegator == null) return;
-                    frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>> otc = (frege.run7.Func.U<CharSequence, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>>>>) justDelegator.mem1.call();
-                    frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>> appliedSeq = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>>>cast(otc.apply(Thunk.<CharSequence>lazy(s)).call()).call();
-                    final frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>> appliedStart = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>>cast(appliedSeq.apply(Thunk.<Integer>lazy(start)).call()).call();
-                    final frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>> appliedBefore = RunTM.<frege.run7.Func.U<Integer, frege.run7.Func.U<Object, Short>>>cast(appliedStart.apply(Thunk.<Integer>lazy(before)).call()).call();
-                    final frege.run7.Func.U<Object, Short> res = RunTM.<frege.run7.Func.U<Object, Short>>cast(appliedBefore.apply(Thunk.<Integer>lazy(count)).call()).call();
-                    frege.prelude.PreludeBase.TST.run(res).call();
+                    if (TDelegator.onTextChanged(del).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.onTextChanged(del).asJust().mem1.call()
+                            .apply(Thunk.<CharSequence>lazy(s)).call()
+                            .apply(Thunk.<Integer>lazy(start)).call()
+                            .apply(Thunk.<Integer>lazy(before)).call()
+                            .apply(Thunk.<Integer>lazy(count)).call()).call();
                 } catch(RuntimeException re) {
                     re.printStackTrace();
                     throw re;
@@ -64,16 +58,10 @@ native module where {
             @Override
             public void afterTextChanged(android.text.Editable s) {
                 try {
-                    frege.prelude.PreludeBase.TMaybe<
-                        frege.run7.Func.U<android.text.Editable, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>
-                    > afterTextChangedDelegator = TTextWatcherDelegator.afterTextChanged(del);
-                    PreludeBase.TMaybe.DJust<
-                        frege.run7.Func.U<android.text.Editable, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>
-                    > justDelegator = afterTextChangedDelegator.asJust();
-                    if (justDelegator == null) return;
-                    frege.run7.Func.U<android.text.Editable, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>> atc = (frege.run7.Func.U<android.text.Editable, frege.run7.Func.U<frege.runtime.Phantom.RealWorld, Short>>) justDelegator.mem1.call();
-                    final frege.run7.Func.U<Object, Short> res = RunTM.<frege.run7.Func.U<Object, Short>>cast(atc.apply(Thunk.<android.text.Editable>lazy(s)).call()).call();
-                    frege.prelude.PreludeBase.TST.run(res).call();
+                    if (TDelegator.afterTextChanged(del).asJust() != null)
+                        PreludeBase.TST.performUnsafe(
+                            TDelegator.afterTextChanged(del).asJust().mem1.call()
+                            .apply(Thunk.<android.text.Editable>lazy(s)).call()).call();
                 } catch(RuntimeException re) {
                     re.printStackTrace();
                     throw re;

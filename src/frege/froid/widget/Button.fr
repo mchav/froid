@@ -1,33 +1,38 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
 module froid.widget.Button where
 
 import froid.content.Context
 import froid.view.View
 import froid.Types
 
-data Button = native android.widget.Button where
-    native setOnClickListener :: MutableIO Button -> MutableIO OnClickListener -> IO ()
-    native setVisibility :: MutableIO Button -> Int -> IO ()
-    native getText :: MutableIO Button -> IO CharSequence
-    native getWidth :: MutableIO Button -> IO Int
-    native getHeight :: MutableIO Button -> IO Int
-    native setText :: MutableIO Button -> String -> IO ()
-    native setEnabled :: MutableIO Button -> Bool -> IO ()
+data Button = mutable native android.widget.Button where
+    native setVisibility :: Button -> Int -> IO ()
+    native getText :: Button -> IO CharSequence
+    native getWidth :: Button -> IO Int
+    native getHeight :: Button -> IO Int
+    native setText :: Button -> String -> IO ()
+    native setEnabled :: Button -> Bool -> IO ()
+    onClick :: Button -> (View -> IO ()) -> IO ()
+    onClick button handler = do
+        v <- button.toView
+        v.onClick handler
+    toView :: Button -> IO (View)
+    toView button = (toView' button >>= either (\cce -> error $ "Cast failed.") return) :: IO (View)
+    fromView :: (Int -> IO (View)) -> Int -> IO (Button)
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO (Button)
+
 
 instance ViewSub Button where
-    native fromView "(android.widget.Button)" :: MutableIO View -> IO (ClassCastException | MutableIO Button)
+    native fromView' "(android.widget.Button)" :: View -> IO (ClassCastException | Button)
 
 instance IsView Button where
-    native toView "(android.view.View)" :: MutableIO Button -> IO (ClassCastException | MutableIO View)
+    native toView' "(android.view.View)" :: Button -> IO (ClassCastException | View)
 
-asButton :: (Int -> IO (MutableIO View)) -> Int -> IO (MutableIO Button)
-asButton find res = do
-    v <- find res
-    (fromView v >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO Button)
-
-asView :: MutableIO Button -> IO (MutableIO View)
-asView button = (toView button >>= either (\cce -> error $ "Cast failed.") return) :: IO (MutableIO View)
-
-setButtonOnClick :: MutableIO Button -> (MutableIO View -> IO ()) -> IO ()
-setButtonOnClick button handler = do
-    v <- asView button
-    setViewOnClick v handler
