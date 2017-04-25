@@ -19,7 +19,7 @@ import froid.widget.TextView
 
 native module type Activity where {}
 
-onCreate :: MutableIO Activity -> Maybe (MutableIO Bundle) -> IO ()
+onCreate :: Activity -> Maybe Bundle -> IO ()
 onCreate this bundle = do
 	tv <- TextView.new this
 	tv.setText "Hello, Android - Love, Frege"
