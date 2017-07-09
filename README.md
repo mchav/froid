@@ -6,7 +6,7 @@ A library for using the Frege programming language in Android development.
 
 ## Usage and examples
 
-To get/setup froid read the instructions on the [froid Wiki](https://github.com/mchav/froid/wiki).
+To get/setup froid read the instructions on the [froid Wiki](https://github.com/mchav/froid/wiki). To write a simple application from scratch follow [this step-by-step tutorial](https://github.com/mchav/froid/wiki/Tutorial).
 
 Simple Activity
 ---------------
@@ -19,7 +19,7 @@ import froid.widget.TextView
 
 native module type Activity where {}
 
-onCreate :: MutableIO Activity -> Maybe (MutableIO Bundle) -> IO ()
+onCreate :: Activity -> Maybe Bundle -> IO ()
 onCreate this bundle = do
 	tv <- TextView.new this
 	tv.setText "Hello, Android - Love, Frege"
@@ -33,23 +33,8 @@ You can find a more involved example [here](https://github.com/mchav/GeoQuiz-Fre
 
 ## Building froid
 
-Run `compile` and then `package`. The Frege compiler will attempt to compile some classes before their dependenices. Recompile until there are no errors. I will look into defining the compile order later.
+Run `compile` and then `package`.
 
 ## Contributing
 
 A lot of what there is to do is create the bindings for the other types in `android`. For classes such as adapters/fragments read [this](http://mchav.github.io/functional-inheritance-in-android/) to learn about the design philosophy for subclassing.  Any PRs of this nature are welcome.
-
-
-
-## Implemented
-
-* Activities
-* Animation
-* View
-* Some basic widgets
-* Intents
-* Logging
-
-## Needed
-
-* TBA
