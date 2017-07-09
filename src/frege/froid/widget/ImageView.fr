@@ -5,7 +5,7 @@
     you may not use this file except in compliance with the License.
 -}
 
-module froid.view.MenuItem where
+module froid.widget.ImageView where
 
-data MenuItem = mutable native android.view.MenuItem where
-    native getItemId :: MenuItem -> IO Int
+data ImageView = mutable native android.widget.ImageView
+    

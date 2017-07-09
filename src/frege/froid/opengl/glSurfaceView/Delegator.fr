@@ -1,0 +1,17 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
+module froid.opengl.glSurfaceView.Delegator where
+
+import froid.view.MotionEvent
+
+-- delegator for a surface view and its subclasses
+data Delegator a = Delegator { onPause          :: Maybe (a -> IO ())
+                             , onResume         :: Maybe (a -> IO ())
+                             , onTouchEvent     :: Maybe (a -> MotionEvent -> IO Bool)
+                             , onTrackballEvent :: Maybe (a -> MotionEvent -> IO Bool)
+                             }

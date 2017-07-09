@@ -1,0 +1,27 @@
+{-
+    Copyright 2016-2017 Michael Chavinda
+    This file is part of froid.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+-}
+
+module froid.widget.SeekBar where
+
+import froid.view.View
+import froid.Types
+
+data SeekBar = mutable native android.widget.SeekBar where
+    native setClickable :: SeekBar -> Bool -> IO ()
+    native setMax :: SeekBar -> Int -> IO ()
+    native setProgress :: SeekBar -> Int -> IO ()
+    fromView :: (Int -> IO View) -> Int -> IO SeekBar
+    fromView find res = do
+        v <- find res
+        (fromView' v >>= either (\cce -> error $ "Cast failed.") return) :: IO (SeekBar)
+
+
+instance ViewSub SeekBar where
+    native fromView' "(android.widget.SeekBar)" :: View -> IO (ClassCastException | SeekBar)
+
+instance IsView SeekBar where
+    native toView' "(android.view.View)" :: SeekBar -> IO (ClassCastException | View)

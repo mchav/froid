@@ -17,6 +17,8 @@ data Intent = mutable native android.content.Intent where
                 | Context -> Class a -> IO Intent
     native getBooleanExtra :: Intent -> String -> Bool -> IO (Maybe Bool)
     native getSerializableExtra :: Intent -> String -> IO SerializableObject
+    native getStringExtra :: Intent -> String -> IO String
     native putExtra :: Intent -> String -> Bool -> IO ()
                      | Intent -> String -> SerializableObject -> IO ()
+                     | Intent -> String -> String -> IO ()
 

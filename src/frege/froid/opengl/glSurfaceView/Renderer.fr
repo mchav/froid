@@ -8,7 +8,8 @@
 module froid.opengl.glSurfaceView.Renderer where
 
 import froid.opengl.glSurfaceView.java.NativeRenderer
+import froid.opengl.glSurfaceView.renderer.Delegator
 
 data GLSurfaceViewRenderer = mutable native froid.opengl.glSurfaceView.java.NativeRenderer.FregeRenderer where
-    native mk "froid.opengl.glSurfaceView.java.NativeRenderer.delegate" :: NativeRenderer.Delegator -> IO GLSurfaceViewRenderer
-    defaultDelegator = NativeRenderer.Delegator { onDrawFrame = Nothing, onSurfaceCreated = Nothing, onSurfaceChanged = Nothing }
+    native mk "froid.opengl.glSurfaceView.java.NativeRenderer.delegate" :: Delegator a -> IO GLSurfaceViewRenderer
+    defaultDelegator = Delegator { onDrawFrame = Nothing, onSurfaceCreated = Nothing, onSurfaceChanged = Nothing }

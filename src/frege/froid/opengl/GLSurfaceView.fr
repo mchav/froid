@@ -8,6 +8,7 @@
 module froid.opengl.GLSurfaceView where
 
 import froid.content.Context
+import froid.opengl.glSurfaceView.Delegator
 import froid.opengl.glSurfaceView.Renderer
 import froid.view.MotionEvent
 import froid.view.View
@@ -19,7 +20,7 @@ data GLSurfaceView = mutable native android.opengl.GLSurfaceView where
                                  , onTouchEvent     = Nothing
                                  , onTrackballEvent = Nothing
                                  }
-    native mk "froid.opengl.GLSurfaceView.delegate" :: Context -> Delegator -> IO GLSurfaceView
+    native mk "froid.opengl.GLSurfaceView.delegate" :: Context -> Delegator GLSurfaceView -> IO GLSurfaceView
     pure native renderModeWhenDirty "android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY" :: Int
     native onPause :: GLSurfaceView -> IO ()
     native onResume :: GLSurfaceView -> IO ()
@@ -39,14 +40,8 @@ instance ViewSub GLSurfaceView where
 instance IsView GLSurfaceView where
     native toView' "(android.view.View)" :: GLSurfaceView -> IO (ClassCastException | View)
 
-data Delegator = Delegator { onPause          :: Maybe (GLSurfaceView -> IO ())
-                           , onResume         :: Maybe (GLSurfaceView -> IO ())
-                           , onTouchEvent     :: Maybe (GLSurfaceView -> MotionEvent -> IO Bool)
-                           , onTrackballEvent :: Maybe (GLSurfaceView -> MotionEvent -> IO Bool)
-                           }
-
 native module where {
-    public static android.opengl.GLSurfaceView delegate(android.content.Context context, TDelegator delegator) {
+    public static android.opengl.GLSurfaceView delegate(android.content.Context context, Delegator.TDelegator delegator) {
         FregeGLSurfaceView glsv = new FregeGLSurfaceView(context);
         glsv.delegator = delegator;
         return (android.opengl.GLSurfaceView) glsv;
@@ -55,12 +50,12 @@ native module where {
 
     public static class FregeGLSurfaceView extends android.opengl.GLSurfaceView {
 
-        TDelegator delegator = null;
+        Delegator.TDelegator delegator = null;
 
         public FregeGLSurfaceView(android.content.Context context) {
             super(context);
         }
-
+        /*
         @Override
         public boolean onTrackballEvent(android.view.MotionEvent e) {
             PreludeBase.TMaybe<
@@ -128,5 +123,6 @@ native module where {
             Func.U<Object, Short> res = RunTM.<Func.U<Object, Short>>cast(op.apply(Thunk.lazy((android.opengl.GLSurfaceView) this)).call()).call();
             PreludeBase.TST.run(res).call();
         }
+        */
     }
 }

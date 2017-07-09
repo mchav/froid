@@ -9,44 +9,46 @@ module froid.opengl.glSurfaceView.java.NativeRenderer where
 
 import froid.javax.microedition.khronos.opengles.GL10
 import froid.javax.microedition.khronos.egl.EGLConfig
-
-data Delegator = Delegator { onDrawFrame    :: Maybe (MutableIO GL10 -> IO ())
-                           , onSurfaceCreated :: Maybe (MutableIO GL10 -> MutableIO EGLConfig -> IO ())
-                           , onSurfaceChanged :: Maybe (MutableIO GL10 -> Int -> Int -> IO ())
-                           }
+import froid.opengl.glSurfaceView.renderer.Delegator
 
 native module where {
 
-    public static FregeRenderer delegate(TDelegator delegator) {
-        FregeRenderer renderer = new FregeRenderer();
+    public static <T> FregeRenderer delegate(Delegator.TDelegator<T> delegator) {
+        FregeRenderer<T> renderer = new FregeRenderer<>();
         renderer.delegator = delegator;
         return renderer;
     }
 
-    public static class FregeRenderer implements android.opengl.GLSurfaceView.Renderer {
+    public static class FregeRenderer<T> implements android.opengl.GLSurfaceView.Renderer {
 
-        TDelegator delegator = null;
+        Delegator.TDelegator<T> delegator = null;
+
+        @SuppressWarnings("unchecked")
+        T injectionInstance = (T) this;
 
         public void onDrawFrame(javax.microedition.khronos.opengles.GL10 gl) {
-            if (TDelegator.onDrawFrame(delegator).asJust() != null)
+            if (Delegator.TDelegator.onDrawFrame(delegator).asJust() != null)
                         PreludeBase.TST.performUnsafe(
-                            TDelegator.onDrawFrame(delegator).asJust().mem1.call()
+                            Delegator.TDelegator.onDrawFrame(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(injectionInstance)).call()
                             .apply(Thunk.lazy(gl)).call()).call();
         }
 
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
-            if (TDelegator.onSurfaceChanged(delegator).asJust() != null)
+            if (Delegator.TDelegator.onSurfaceChanged(delegator).asJust() != null)
                         PreludeBase.TST.performUnsafe(
-                            TDelegator.onSurfaceChanged(delegator).asJust().mem1.call()
+                            Delegator.TDelegator.onSurfaceChanged(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(injectionInstance)).call()
                             .apply(Thunk.lazy(gl)).call()
                             .apply(Thunk.<Integer>lazy(width)).call()
                             .apply(Thunk.<Integer>lazy(height)).call()).call();
         }
 
         public void onSurfaceCreated(javax.microedition.khronos.opengles.GL10 gl, javax.microedition.khronos.egl.EGLConfig config) {
-            if (TDelegator.onSurfaceCreated(delegator).asJust() != null)
+            if (Delegator.TDelegator.onSurfaceCreated(delegator).asJust() != null)
                         PreludeBase.TST.performUnsafe(
-                            TDelegator.onSurfaceCreated(delegator).asJust().mem1.call()
+                            Delegator.TDelegator.onSurfaceCreated(delegator).asJust().mem1.call()
+                            .apply(Thunk.lazy(injectionInstance)).call()
                             .apply(Thunk.lazy(gl)).call()
                             .apply(Thunk.lazy(config)).call()).call();
         }

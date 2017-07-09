@@ -5,7 +5,8 @@
     you may not use this file except in compliance with the License.
 -}
 
-module froid.view.MenuItem where
+module froid.os.Handler where
 
-data MenuItem = mutable native android.view.MenuItem where
-    native getItemId :: MenuItem -> IO Int
+data Handler = mutable native android.os.Handler where
+    native new :: () -> IO Handler
+    native postDelayed :: Handler -> MutableIO Runnable -> Long -> IO ()
