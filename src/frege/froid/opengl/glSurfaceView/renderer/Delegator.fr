@@ -14,3 +14,4 @@ data Delegator a = Delegator { onDrawFrame      :: Maybe (a -> GL10 -> IO ())
                              , onSurfaceCreated :: Maybe (a -> GL10 -> EGLConfig -> IO ())
                              , onSurfaceChanged :: Maybe (a -> GL10 -> Int -> Int -> IO ())
                              }
+

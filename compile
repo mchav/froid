@@ -1,4 +1,97 @@
-# (mkdir build\froid\app) 2> $null
+#!/bin/bash
+
+mkdir -p ./lib
+
+if [ ! -e ./lib/frege.jar ]
+then
+  echo "Downloading Frege version 3.24..."
+  wget -O ./lib/frege.jar https://github.com/Frege/frege/releases/download/3.24alpha/frege3.24-7.100.jar
+fi
+
+# default to Linux installation.
+ANDROID_SDK=$HOME"/Android/Sdk"
+
+unamestr=`uname`
+if [[ "$unamestr" == 'Darwin' ]]; then
+   ANDROID_SDK=$HOME"/Library/Android/sdk"
+fi
+
+ANDROID_PLATFORMS=$ANDROID_SDK"/platforms"
+
+# get latest Android Version Number
+function get_latest_android_version() {
+  versions=()
+
+  for filename in $ANDROID_PLATFORMS/*; do
+    version=${filename: -2}
+    versions+=($version)
+  done
+
+  IFS=$'\n'
+  echo "${versions[*]}" | sort -nr | head -n1
+
+}
+
+ANDROID_JAR_PATH=$ANDROID_PLATFORMS"/android-"$(get_latest_android_version)
+
+# echo $ANDROID_SDK
+
 rtjar=$(java -verbose 2>/dev/null | head -n 1 | cut -c 9- | rev | cut -c 2- | rev)
-javac -cp "./lib/*" -bootclasspath $rtjar -source 1.7 -target 1.7 -d ./build ./src/java/*
-java -Xmx6072m -Xss10M -XX:MaxJavaStackTraceDepth=-1 -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none -cp "./lib/*" frege.compiler.Main -target 1.7 -d ./build ./src/frege/
+
+# compile vanilla Java Source files.
+javac -cp "./lib/*:$ANDROID_JAR_PATH/*" -bootclasspath $rtjar -source 1.7 -target 1.7 -d ./build ./src/java/*
+
+fregec="java -Xmx6072m -Xss10M -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none -cp \"./lib/*:$ANDROID_JAR_PATH/*\" frege.compiler.Main -target 1.7 -d ./build"
+
+# takes a list of files and compiles each of them.
+function compile_files {
+  arr=("$@")
+  for f in "${arr[@]}"; do
+    eval $fregec "$f"
+  done
+}
+
+# modules with no dependencies.
+declare -a no_deps=(
+"./src/frege/froid/view/View.fr"
+"./src/frege/froid/view/ViewGroup.fr"
+"./src/frege/froid/widget/CompoundButton.fr"
+"./src/frege/froid/view/Menu.fr"
+"./src/frege/froid/Types.fr"
+"./src/frege/froid/content/res"
+"./src/frege/froid/java/nio/IntBuffer.fr"
+"./src/frege/froid/animation"
+"./src/frege/froid/text/style"
+"./src/frege/froid/util"
+)
+
+# compile modules with no dependencies.
+compile_files "${no_deps[@]}"
+
+# modules with dependencies
+declare -a with_deps=(
+"./src/frege/froid/media"
+"./src/frege/froid/text/Editable.fr"
+"./src/frege/froid/text"
+"./src/frege/froid/content/Context.fr"
+"./src/frege/froid/content/Intent.fr"
+"./src/frege/froid/graphics"
+"./src/frege/froid/os"
+"./src/frege/froid/widget"
+"./src/frege/froid/view"
+"./src/frege/froid/content/res"
+"./src/frege/froid/app/java"
+"./src/frege/froid/app"
+"./src/frege/froid/app/Activity.fr"
+"./src/frege/froid/java"
+"./src/frege/froid/javax"
+"./src/frege/froid/opengl/glSurfaceView/renderer"
+"./src/frege/froid/opengl/glSurfaceView/java"
+"./src/frege/froid/opengl/glSurfaceView"
+"./src/frege/froid/opengl/GLSurfaceView.fr"
+)
+
+# compile modules with dependencies.
+compile_files "${with_deps[@]}"
+
+
