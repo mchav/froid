@@ -32,6 +32,8 @@ project.afterEvaluate {
             def frege_src = new File(project.rootDir.path +  "/app/src/main/frege".replace('/' as char, File.separatorChar))
             frege_src.mkdirs()
 
+            android.sourceSets.getByName("main").java.setSrcDirs([frege_src] + android.sourceSets.getByName("main").java.getSrcDirs())
+
             main = 'frege.compiler.Main'
 
             def androidJarPath = android.bootClasspath[0].path
