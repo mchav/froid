@@ -70,11 +70,11 @@ compile_files "${no_deps[@]}"
 
 # modules with dependencies
 declare -a with_deps=(
-"./src/frege/froid/media"
 "./src/frege/froid/text/Editable.fr"
 "./src/frege/froid/text"
 "./src/frege/froid/content/Context.fr"
 "./src/frege/froid/content/Intent.fr"
+"./src/frege/froid/media"
 "./src/frege/froid/graphics"
 "./src/frege/froid/os"
 "./src/frege/froid/widget"
