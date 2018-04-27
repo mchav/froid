@@ -1,0 +1,65 @@
+project.afterEvaluate {
+    extensions.compileFrege = {
+        description = 'Compile Frege to Java'
+        javaexec {
+            android.dexOptions.setJavaMaxHeapSize("4g")
+            android.defaultConfig.setMultiDexEnabled(true)
+
+            def libs = project.rootDir.path +  "/app/libs".replace('/' as char, File.separatorChar)
+
+            def froid = new File(libs + "/froid.jar".replace('/' as char, File.separatorChar))
+            if (!froid.exists()) {
+                new URL("https://github.com/mchav/froid/releases/download/v0.0.2/froid_0.0.2.jar")
+                        .withInputStream{ i ->
+                    froid.withOutputStream{ it << i }
+                }
+            }
+            def froid_support = new File(libs + "/froid-support.jar".replace('/' as char, File.separatorChar))
+            if (!froid_support.exists()) {
+                new URL("https://github.com/mchav/froid-support/releases/download/v0.0.1/froid-support_0.0.1.jar")
+                        .withInputStream{ i ->
+                    froid_support.withOutputStream{ it << i }
+                }
+            }
+            def frege = new File(libs + "/frege-3.24.100.1-jdk7.jar".replace('/' as char, File.separatorChar))
+            if (!frege.exists()) {
+                new URL("https://github.com/mchav/GeoQuiz-Frege/blob/master/app/libs/frege-3.24.100.1-jdk7.jar?raw=true")
+                        .withInputStream{ i ->
+                    frege.withOutputStream{ it << i }
+                }
+            }
+
+            def frege_src = new File(project.rootDir.path +  "/app/src/main/frege".replace('/' as char, File.separatorChar))
+            frege_src.mkdirs()
+
+            android.sourceSets.getByName("main").java.setSrcDirs([frege_src] + android.sourceSets.getByName("main").java.getSrcDirs())
+
+            main = 'frege.compiler.Main'
+
+            def androidJarPath = android.bootClasspath[0].path
+            def list = [androidJarPath]
+            classpath += files(androidJarPath)
+
+            android.applicationVariants.each { variant ->
+                variant.getCompileClasspath(null).each { path ->
+                    list << path
+                    classpath += files(path)
+                }
+            }
+
+            def appPath = "src/main/frege/".replace('/' as char, File.separatorChar)
+            def a = ['-j', '-target', '1.7', '-v', '-inline', '-O', '-d', 'src/main/java', '-make',
+                     '-fp', list.join(File.pathSeparator),
+                     '-sp', appPath, appPath ]
+            project.logger.debug('Frege compiler args: "' + a.join(' ') + '"')
+            args (*a)
+        }
+    }
+    try {
+        compileFrege()
+    } catch (Exception e) {
+        // all error handling is shown on the gradle console.
+        System.err << "Frege compile failed.\n"
+        System.err << e.toString() + "\n"
+    }
+}

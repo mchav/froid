@@ -15,6 +15,7 @@ module io.github.mchav.fregeandroid.FregeActivity where
 
 import froid.app.Activity
 import froid.content.Context
+import froid.os.Bundle
 import froid.widget.TextView
 
 native module type Activity where {}
