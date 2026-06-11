@@ -14,11 +14,14 @@ data TextViewN = native "RealWorld android.widget.TextView"
 type TextView = MutableIO TextViewN
 data ButtonN = native "RealWorld android.widget.Button"
 type Button = MutableIO ButtonN
+data EditTextN = native "RealWorld android.widget.EditText"
+type EditText = MutableIO EditTextN
 data LinearLayoutN = native "RealWorld android.widget.LinearLayout"
 type LinearLayout = MutableIO LinearLayoutN
 
 native newTextView     new :: Context -> IO TextView
 native newButton       new :: Context -> IO Button
+native newEditText     new :: Context -> IO EditText
 native newLinearLayout new :: Context -> IO LinearLayout
 
 native setText :: TextView -> String -> IO ()
@@ -38,6 +41,7 @@ pure native gravityCenterAll "android.view.Gravity.CENTER"         :: Int
 native setTextColor   :: TextView -> Int -> IO ()
 native setTextGravity "setGravity" :: TextView -> Int -> IO ()
 native setMaxWidth    :: TextView -> Int -> IO ()
+native setTextIsSelectable :: TextView -> Bool -> IO ()
 native setTypeface    :: TextView -> Typeface -> IO ()
 
 data Typeface = pure native "android.graphics.Typeface"
@@ -85,4 +89,15 @@ pure native complexUnitDip "android.util.TypedValue.COMPLEX_UNIT_DIP" :: Int
 -- Safe upcasts to View (every widget is-a View).
 native textViewAsView "(android.view.View)" :: TextView     -> IO View
 native buttonAsView   "(android.view.View)" :: Button       -> IO View
+native editTextAsView "(android.view.View)" :: EditText     -> IO View
 native layoutAsView   "(android.view.View)" :: LinearLayout -> IO View
+
+-- Upcasts to TextView (for setText etc).
+native buttonAsTextView   "(android.widget.TextView)" :: Button   -> IO TextView
+native editTextAsTextView "(android.widget.TextView)" :: EditText -> IO TextView
+
+--- Run a Frege handler whenever the text changes.
+native onTextChanged "froid.widget.WidgetHelpers.onTextChanged" :: TextView -> (String -> IO ()) -> IO ()
+
+--- Set the cursor to the end of the text.
+native setSelection "froid.widget.WidgetHelpers.setSelection" :: EditText -> IO ()

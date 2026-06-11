@@ -26,6 +26,12 @@ class FregeAndroidPlugin : Plugin<Project> {
             project.tasks.register("prepareKotlinBuildScriptModel")
         }
 
+        // unitTestClasses is sometimes requested by IDEs or specific toolchains;
+        // ensure it exists so that tasks like :module:unitTestClasses don't fail.
+        if (project.tasks.findByName("unitTestClasses") == null) {
+            project.tasks.register("unitTestClasses")
+        }
+
         // The Frege compiler+runtime jar. In this repo it's vendored under libs/;
         // for external consumers it is downloaded once and cached. Adding it to
         // `implementation` puts the runtime (frege.run8.*) on the compile + runtime

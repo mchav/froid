@@ -76,8 +76,21 @@ dynText sig = Ui (\ctx -> \_ -> do
     tv <- newTextView ctx
     setTextSize tv bodyTextSize
     setTextGravity tv gravityCenterAll
+    setTextIsSelectable tv true
     bindText tv sig
     textViewAsView tv)
+
+--- An editable text field.
+editText :: Signal String -> (String -> msg) -> Ui msg
+editText sig onUpdate = Ui (\ctx -> \dispatch -> do
+    et  <- newEditText ctx
+    etv <- editTextAsTextView et
+    setTextSize etv bodyTextSize
+    bindText etv sig
+    -- Move cursor to end after reactive updates.
+    react sig (\_ -> setSelection et)
+    onTextChanged etv (\s -> dispatch (onUpdate s))
+    editTextAsView et)
 
 --- Bold dynamic text whose colour also tracks the signal (text, "#RRGGBB").
 dynColoredText :: Signal (String, String) -> Ui msg

@@ -1,0 +1,49 @@
+module app.Rotate where
+
+import froid.app.Activity
+import froid.ui.App
+import froid.frp.Signal
+import Data.List (elemIndex)
+
+native module type Activity where {}
+
+lowers = "abcdefghijklmnopqrstuvwxyz"
+uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+rotateChar :: Int -> Char -> Char
+rotateChar n c
+    | Just i <- elemIndex c (unpacked lowers) = (unpacked lowers) !! ((i + n) `mod` 26)
+    | Just i <- elemIndex c (unpacked uppers) = (unpacked uppers) !! ((i + n) `mod` 26)
+    | otherwise = c
+
+rotate :: Int -> String -> String
+rotate n s = packed (map (rotateChar n) (unpacked s))
+
+data Model = Model { text :: String, nStr :: String, rotated :: String }
+
+initial :: Model
+initial = Model { text = "", nStr = "13", rotated = "" }
+
+data Msg = UpdateText String | UpdateN String | DoRotate
+
+update :: Msg -> Model -> Model
+update (UpdateText t) m = m.{ text = t }
+update (UpdateN n)    m = m.{ nStr = n }
+update DoRotate       m =
+    case (m.nStr).int of
+        Right n -> m.{ rotated = rotate n m.text }
+        _       -> m
+
+view :: Signal Model -> Ui Msg
+view model = column
+    [ editText (fmap (\m -> m.text) model) UpdateText
+    , editText (fmap (\m -> m.nStr) model) UpdateN
+    , button "Rotate" DoRotate
+    , dynText (fmap (\m -> m.rotated) model)
+    ]
+
+rotateApp :: App Model Msg
+rotateApp = App { initial = initial, update = update, view = view }
+
+onCreate :: Activity -> IO ()
+onCreate this = runApp this rotateApp
